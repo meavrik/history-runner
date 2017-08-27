@@ -14,18 +14,23 @@ import { UtilsService } from '../services/utils.service';
 export class WorldComponent implements OnInit {
   population: Person[] = [];
   //currentPerson: Person;
+  data;
 
   constructor(public popuplationService: PopulationService, private time: TimeService) {
-    
+
   }
 
   ngOnInit() {
     this.popuplationService.population.subscribe(population => {
       this.population = population;
       //console.log('pop change!!! '+this.population.length);
-      
+
       //this.currentPerson = population[population.length - 1];
       //this.currentPerson.genome.chromosomes
+
+      this.data = this.population.map(person => {
+        return { label: person.fullName, children: person.childrens ,expanded: true}
+      })
     })
 
     for (var i = 0; i < 30; i++) {
@@ -37,5 +42,9 @@ export class WorldComponent implements OnInit {
       //this.popuplationService.generateNewPerson(new Person(), new Person());
     })
   }
+
+
+
+
 
 }
