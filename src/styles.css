@@ -1,1 +1,12 @@
 /* You can add global styles to this file, and also import other style files */
+html {
+    font-family: ProximaNova, Helvetica Neue, helvetica, arial;
+    font-size: 15px;
+    -webkit-font-smoothing: antialiased;
+    height: 100%; 
+}
+body {
+    padding:0;
+    margin:0;
+    height: 100%; 
+}
