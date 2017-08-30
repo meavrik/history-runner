@@ -24,8 +24,14 @@ export class Person {
     birthDate: Date;
     fertility: number;
     pregnant: number;
+    job
+    requireFood: number;
+    education: number;
+    happiness: number;
+    maidenName: string = "";
+    founder:boolean;
+    generation:number;
     // populationService: PopulationService;
-
 
     constructor() {
         //let injector = ReflectiveInjector.resolveAndCreate([PopulationService]);
@@ -35,7 +41,7 @@ export class Person {
     born(parent1: Person = null, parent2: Person = null) {
         this.father = parent1;
         this.mother = parent2;
-        this.genome = parent1 ? new Genome(parent1.genome, parent2.genome) : new Genome();
+        this.genome = (this.mother && this.mother.genome) ? new Genome(this.father.genome, this.mother.genome) : new Genome();
         this.fertility = 0;
         this.sex = Math.round(Math.random()) ? "male" : "female";
         //this.age = 0;
@@ -45,7 +51,7 @@ export class Person {
         this.firstName = this.tribe.generateFirstName(this);
         this.lastName = this.tribe.generateLastName(this.father);
         this.alive = true;
-
+        this.happiness = 100;
         console.info(this.fullName + ' IS BORN!');
     }
 
@@ -137,7 +143,10 @@ export class Person {
         person.spouse = this;
 
         if (this.sex == "male") this.spouse.lastName = this.lastName;
-        if (this.sex == "female") this.lastName = this.spouse.lastName;
+        if (this.sex == "female") {
+            this.maidenName = this.lastName;
+            this.lastName = this.spouse.lastName;
+        };
 
         console.info(this.firstName + ' and ' + person.firstName + ' GOT MARRIED');
     }
@@ -215,5 +224,13 @@ export class Person {
         console.warn(this.fullName + ' HAS DIED! :( at the age of ' + this.age);
 
         this.alive = false;
+    }
+
+    get isChild(): boolean {
+        return this.age < 13 ? true : false;
+    }
+
+    get isInfant(): boolean {
+        return this.age < 3 ? true : false;
     }
 }

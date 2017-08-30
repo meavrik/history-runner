@@ -1,0 +1,107 @@
+{
+    "tribes": [{
+            "tribe": "Hobbit",
+            "familes": [
+                "Brandybuck",
+                "Chubb",
+                "Grubb",
+                "Took",
+                "Goold",
+                "Goodchild",
+                "Smallburrow",
+                "Bolger",
+                "Sackville",
+                "Baggins",
+                "Tûk",
+                "Hogpen",
+                "Sandheaver",
+                "Oldbuck",
+                "Tunnelly",
+                "Gammidge",
+                "Maggot",
+                "Bracegirdle",
+                "Clayhanger",
+                "Zaragamba",
+                "Brockhouse",
+                "Sandheaver",
+                "Banks"
+            ],
+            "names": {
+                "male": ["Sadoc", "Posco", "Folcard", "Melampus", "Hal", "Dinodas", "Odo", "Gerontius", "Roper", "Marcus", "Isembold", "Minto", "Madoc", "Hildigard", "Chilimanzar"],
+                "female": ["Primula", "Cara", "Maxima", "Matilda", "Pamphila", "Poppy", "Rose", "Yolanda", "Diamanda", "Donnamira", "Rosamunda", "Camelia", "Fatima", "Celendine"]
+            }
+        },
+        {
+            "tribe": "Klingon",
+            "familes": [
+                "Gordek",
+                "Koru",
+                "Kommora",
+                "Edronh",
+                "Simparri",
+                "Olahg",
+                "Quark",
+                "Boral",
+                "Gura",
+                "Trisra",
+                "Gowr",
+                "Torghn",
+                "Simpalla",
+                "Napos",
+                "Vallic",
+                "Rajuc",
+                "Neygebh",
+                "Qua'lon",
+                "Wulfek",
+                "Kotzher",
+                "Furstig",
+                "K'mpec",
+                "Torin"
+            ],
+            "names": {
+                "male": ["Kheyl", "Ka'As", "Torak", "M'Kita", "L'Kraka", "Dukath", "Karagg", "Klynn", "Kraden", "Korus", "Konjah", "Kaa'lak", "Tel'peh", "Ch'targh", "Angghal"],
+                "female": ["Leskit", "G'Mira", "K'leela", "M'Kola", "Ch'Mira", "D'Lij", "J'Eval", "T'Mara", "G'Kara", "Kintata", "R'Mara", "Kezhke", "D'Lij", "Aperokei"]
+            }
+        },
+        {
+            "tribe": "Hebrew",
+            "familes": [
+                "Cohen",
+                "Levi",
+                "Shabat",
+                "Baroh",
+                "Ben-$",
+                "Israel",
+                "Dov"
+            ],
+            "names": {
+                "male": ["Avraham", "Yosef", "Dan", "Yakov", "Shoul", "Alon", "Dor", "Moshe", "Naftali", "Oren", "Itzhak", "Youda", "Israel", "Kalev", "Shmoel"],
+                "female": ["Rachel", "Leah", "Dana", "Sara", "Miryam", "Dafna", "Vered", "Ester", "Neomi", "Sarai", "Revka", "Bat-sheva", "Dvora", "Hagar"]
+            }
+        }
+    ],
+
+
+
+
+    "buildings": [{
+            "type": "smallHouse",
+            "resources": [
+                { "type": "wood", "amount": 10 },
+                { "type": "stone", "amount": 20 }
+            ],
+            "constructionPoints": 50,
+            "constructionTime": 120
+        },
+        {
+            "type": "smallFarm",
+            "resources": [
+                { "type": "wood", "amount": 10 },
+                { "type": "stone", "amount": 20 }
+            ],
+            "constructionPoints": 50,
+            "constructionTime": 120
+        }
+
+    ]
+}

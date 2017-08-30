@@ -1,5 +1,14 @@
-<div style="background-color:antiquewhite;margin:0;padding:0 20px 0 20px;height:60px;display:flex;justify-content:space-between;align-items:center" >
-  <h3>TIME : {{date | date:'longDate'}}</h3>
-  <p>Population : {{population.length | number}}</p>
+<div style="background-color:antiquewhite;margin:0;padding:0 20px 0 20px;height:60px;display:flex;justify-content:space-between;align-items:center">
+    <div style="display:flex;padding:0">
+        <!-- <button pButton type="button" [icon]="this.time.pause?'fa-play':'fa-pause'" (click)="onPause()"></button> -->
+        <p-selectButton [options]="speedOptions" [(ngModel)]="selectedSpeed" (onChange)="onSpeedChange()"></p-selectButton>
+
+        <h4>TIME : {{date | date:'longDate'}}</h4>
+
+    </div>
+    <p>Population : {{population.length | number}}</p>
 </div>
 
+<button pButton type="button" label="Construct" (click)="onPause()"></button>
+
+<p-dropdown [options]="constructions" [(ngModel)]="selectedConstruct" placeholder="Select a constructions"></p-dropdown>

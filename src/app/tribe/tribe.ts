@@ -1,15 +1,47 @@
-import { Person } from '../life/person';
-export class Tribe {
+import { House } from './buildings/house';
 
+import { Person } from "app/life/person";
+
+export class Tribe {
+    king: Person;
     name: string;
     familes: string[];
     names: any;
     peoples: Person[] = [];
+    womans: Person[];
+    mans: Person[];
+    kids: Person[];
+    employed: Person[] = [];
+    unemployed: Person[] = [];
+    resources: any[];
+    gold: number;
+
+    scienePoints: number;
+    constructionPoints: number;
+
+
+    houses: House[] = [];
 
     constructor(data: any) {
         this.name = data.tribe;
         this.familes = data.familes;
         this.names = data.names;
+    }
+
+    selectAKing() {
+        let mostFit: Person;
+        this.peoples.forEach(person => {
+            if (!mostFit) { mostFit = person; } else
+                if (person.genome.getChromosomeByName('chr').value > mostFit.genome.getChromosomeByName('cha').value) {
+                    mostFit = person;
+                }
+        })
+
+        this.king = mostFit;
+    }
+
+    assignForWork(person: Person) {
+        this.unemployed = this.peoples.filter(person => person.job)
     }
 
     generateFirstName(person: Person): string {

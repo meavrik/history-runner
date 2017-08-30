@@ -5,6 +5,7 @@ import { Person } from '../life/person';
 import { Genome } from '../life/genome';
 import { TimeService } from '../services/time.service';
 import { UtilsService } from '../services/utils.service';
+import { TreeNode } from "primeng/components/common/treenode";
 
 @Component({
   selector: 'app-world',
@@ -14,13 +15,25 @@ import { UtilsService } from '../services/utils.service';
 export class WorldComponent implements OnInit {
   population: Person[] = [];
   //currentPerson: Person;
-  data;
+  data: TreeNode[];
+  message: any;
 
   constructor(public popuplationService: PopulationService, private time: TimeService) {
 
   }
 
   ngOnInit() {
+
+    this.data = [{
+      label: 'Root',
+      children: [],
+      expanded: true
+    }];
+
+    this.popuplationService.message.subscribe(message => {
+      this.message = message
+    })
+
     this.popuplationService.population.subscribe(population => {
       this.population = population;
       //console.log('pop change!!! '+this.population.length);
@@ -28,14 +41,19 @@ export class WorldComponent implements OnInit {
       //this.currentPerson = population[population.length - 1];
       //this.currentPerson.genome.chromosomes
 
-      this.data = this.population.map(person => {
-        return { label: person.fullName, children: person.childrens ,expanded: true}
-      })
+      /*  this.data = this.population.map(person => {
+         return { label: person.fullName, children: person.childrens?person.childrens.map(a => { return { label: a.fullName, children: [] } }):[], expanded: true }
+       }) */
+
+      /* this.data[0].children = this.population.map(person => {
+        return { label: person.fullName, children: this.getChildrens(person), expanded: false }
+      }) */
     })
 
-    for (var i = 0; i < 30; i++) {
-      this.popuplationService.generateNewPerson(new Person(), new Person(), UtilsService.randomNumber(15, 60));
-    }
+    
+
+
+
 
     this.time.date.subscribe(date => {
 
@@ -43,8 +61,16 @@ export class WorldComponent implements OnInit {
     })
   }
 
+  /* getChildrens(person: Person): TreeNode[] {
+    return person.childrens.map(person => { return { label: person.fullName, expanded: false, children: this.getChildrens(person) } })
+  } */
 
+  onHide() {
+    this.time.pause=false;
+  }
 
-
+  onShow() {
+    this.time.pause=true;
+  }
 
 }

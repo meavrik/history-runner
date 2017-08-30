@@ -6,11 +6,11 @@ import { WorldComponent } from './world/world.component';
 import { HudComponent } from './hud/hud.component';
 import { TimeService } from './services/time.service';
 import { PopulationService } from './services/population.service';
-import { UtilsService } from './services/utils.service';
-import { Person } from './life/person';
-import { OrganizationChartModule } from 'primeng/primeng';
+import { OrganizationChartModule, SelectButtonModule, ListboxModule, DropdownModule, PanelModule, DialogModule } from 'primeng/primeng';
 
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { ButtonModule } from "primeng/components/button/button";
+import { FormsModule } from '@angular/forms'
 @NgModule({
   declarations: [
     AppComponent,
@@ -19,11 +19,18 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
     
   ],
   imports: [
+    FormsModule,
     BrowserModule,
     BrowserAnimationsModule,
-    OrganizationChartModule
+    OrganizationChartModule,
+    ButtonModule,
+    SelectButtonModule,
+    DropdownModule,
+    ListboxModule,
+    PanelModule,
+    DialogModule
   ],
-  providers: [TimeService, PopulationService, UtilsService],
+  providers: [TimeService, PopulationService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

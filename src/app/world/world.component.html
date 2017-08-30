@@ -1,26 +1,44 @@
+<div *ngIf="message">
+    <p-dialog [header]="message.title" [(visible)]="message" dismissableMask="true" modal="true" (onShow)="onShow()" (onHide)="onHide()">
+        {{message.content}}
+    </p-dialog>
+</div>
+
+
+
+
+
 <div style="padding:10px;height:100%;background-color:deepskyblue">
 
-    <p-organizationChart [value]="data"></p-organizationChart>
-    
-    <div style="display:flex;justify-content:space-around">
-        <div *ngFor="let tribe of popuplationService.tribes">
-            {{tribe.name}} ({{tribe.peoples.length}})
+    <!-- <p-organizationChart [value]="data"></p-organizationChart> -->
 
-            <div class="card" *ngFor="let currentPerson of tribe.peoples">
-                <!-- <p>TRIBE : {{currentPerson.tribe.name}}</p> -->
-                <b>{{currentPerson.firstName}} {{currentPerson.lastName}} ({{currentPerson.sex}} {{currentPerson.age}} health = {{currentPerson.health}})</b>
-                <p *ngIf="currentPerson.spouse">married to {{currentPerson.spouse.fullName}} childrens {{currentPerson.childrens.length}} ({{currentPerson.fertility}})
-                </p>
-                <!--  <li *ngFor="let item of currentPerson.genome.chromosomes"> 
+    <div style="display:flex;justify-content:space-around">
+
+        <div *ngFor="let tribe of popuplationService.tribes">
+            <p-panel>
+                <p-header>
+                    <h3>{{tribe.name}} | <small>king : {{tribe.king.fullName}}</small></h3>
+                    <p>Population {{tribe.peoples.length}} ({{tribe.kids.length}} kids)</p>
+                </p-header>
+                <div style="display:flex;flex-wrap:wrap">
+                    <div class="card" *ngFor="let person of tribe.peoples">
+                        <!-- <p>TRIBE : {{person.tribe.name}}</p> -->
+                        <div style="padding:5px;background-color:cyan">
+                            <i [class]="person.sex=='male'?'fa fa-mars':'fa fa-venus'" aria-hidden="true"></i>
+                            <b>{{person.fullName}} </b>
+
+                        </div>
+                        <p><small> {{person.sex}} age {{person.age}} with {{person.health}}% health</small></p>
+
+                        <small *ngIf="person.spouse">married to {{person.spouse.fullName}} childrens {{person.childrens.length}} ({{person.fertility}})
+                        </small>
+                        <!--  <li *ngFor="let item of person.genome.chromosomes"> 
                         {{item.type}} : {{item.value}} 
                     </li>   -->
-            </div>
+                    </div>
+                </div>
+            </p-panel>
         </div>
     </div>
-
-
-
-
-
 
 </div>

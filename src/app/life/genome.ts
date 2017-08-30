@@ -3,13 +3,12 @@ import { UtilsService } from '../services/utils.service';
 
 
 
-
-const attributes:string[] = ['str', 'dex', 'con', 'int', 'wis', 'cha'];
-
+//strength(כוח), dexterity(זריזות),Constitution(חוסן), intelligent,wisdom,charisma
+const attributes: string[] = ['str', 'dex', 'con', 'int', 'wis', 'cha'];
 
 
 export class Genome {
-    static totalAttValue:number = Math.round(Math.random() * 10) + 60;
+    static totalAttValue: number = Math.round(Math.random() * 10) + 60;
     chromosomes: Chromosome[] = [];
     //matchChromosome:Chromosome;
 
@@ -18,7 +17,7 @@ export class Genome {
         attributes.forEach(attribute => {
             this.chromosomes.push(new Chromosome(attribute))
         })
-        
+
 
         if (!genome1 || !genome2) {
             let arr: number[] = [];
@@ -51,8 +50,8 @@ export class Genome {
 
 
 
-    getChromosomeByName(name:string):Chromosome {
-        this.chromosomes.forEach(chromosome =>{
+    getChromosomeByName(name: string): Chromosome {
+        this.chromosomes.forEach(chromosome => {
             if (name == chromosome.type) return chromosome;
         });
 

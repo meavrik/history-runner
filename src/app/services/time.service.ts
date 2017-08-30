@@ -5,53 +5,46 @@ import { PopulationService } from './population.service';
 @Injectable()
 export class TimeService {
 
-  year: number = 0;
+  year: number = 100;
   month: number = 1;
   startTime: Boolean = false;
   _date: BehaviorSubject<Date> = <BehaviorSubject<Date>>new BehaviorSubject(null);
   _currentDate: Date;
 
+  timer: Observable<number>;
+  _pause: boolean = true;
+
+  speed: number = 100;
 
   constructor(private populationService: PopulationService) {
 
-    let timer = Observable.timer(0, 10);
-    timer.subscribe(t => {
+    this.timer = Observable.timer(0, 10);
+    this.timer.subscribe(t => {
+      if (!this._pause) {
 
-      let date: Date = new Date();
+        let date: Date = new Date();
 
-      date.setFullYear(this.year, this.month);
-      if (!this.startTime) {
-        this.startTime = true;
-        date.setMonth(1);
-        date.setDate(0)
-      }
-
-      /* console.log('11111 ' +date.getDate());
-      if (date.getDate() == 1 && date.getMonth() == 0) {
-        console.log('11111');
-        
-        this.year++;
-        this.populationService.peoples.forEach(person => person.age++);
-        debugger
-      } */
-      this.month = date.getMonth();
-      date.setDate(t);
-
-      if (date.getDate() == 1) {
-        //this.newMonth(date.getMonth() == 0);
-        this.populationService.newMonth();
-
-        if (date.getMonth() == 0) {
-          this.populationService.newYear();
+        date.setFullYear(this.year, this.month);
+        if (!this.startTime) {
+          this.startTime = true;
+          date.setMonth(1);
+          date.setDate(0)
         }
-        /* if (date.getFullYear() > 0 && date.getMonth() == 0) {
-          //this.year++;
-          this.newYear();
-        } */
-      }
 
-      this._currentDate = date
-      this._date.next(date);
+        this.month = date.getMonth();
+        date.setDate(t);
+
+        if (date.getDate() == 1) {
+          this.populationService.newMonth();
+
+          if (date.getMonth() == 0) {
+            this.populationService.newYear();
+          }
+        }
+
+        this._currentDate = date
+        this._date.next(date);
+      }
     });
 
 
@@ -59,25 +52,25 @@ export class TimeService {
       if (population && population.length) {
         population[population.length - 1].birthDate = this._currentDate;
       }
-      
+
     })
   }
 
-  /* newMonth(newYear:boolean=false) {
-    this.populationService.peoples.forEach(person => {
-      person.setNewMonth();
-
-      if (newYear) {
-        person.setNewYear();
-      }
-    });
+  startHistory() {
+    this.pause = false;
   }
 
-  newYear() {
-    
+ /*  get currentDate(): Date {
+    return this._currentDate;
   } */
 
   get date(): Observable<Date> { return this._date.asObservable() }
 
+  set pause(value: boolean) {
+    this._pause = value;
+  }
 
+  get pause(): boolean {
+    return this._pause
+  }
 }
