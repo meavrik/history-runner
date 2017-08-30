@@ -49,16 +49,6 @@ export class WorldComponent implements OnInit {
         return { label: person.fullName, children: this.getChildrens(person), expanded: false }
       }) */
     })
-
-    
-
-
-
-
-    this.time.date.subscribe(date => {
-
-      //this.popuplationService.generateNewPerson(new Person(), new Person());
-    })
   }
 
   /* getChildrens(person: Person): TreeNode[] {

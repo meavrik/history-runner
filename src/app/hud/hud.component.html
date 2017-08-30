@@ -6,7 +6,7 @@
         <h4>TIME : {{date | date:'longDate'}}</h4>
 
     </div>
-    <p>Population : {{population.length | number}}</p>
+    <p *ngIf="population">Population : {{population.length | number}}</p>
 </div>
 
 <button pButton type="button" label="Construct" (click)="onPause()"></button>

@@ -33,10 +33,10 @@ export class AppComponent {
   }
 
   statGame() {
-    /* for (var i = 0; i < 30; i++) {
-      this.populationService.generateNewPerson(new Person(), new Person(), UtilsService.randomNumber(15, 60));
+    for (var i = 0; i < 30; i++) {
+      this.populationService.generateNewPerson(new Person(), new Person(), UtilsService.randomNumber(15, 35));
     }
     this.gameStarted = true;
-    this.time.startHistory() */
+    this.time.startHistory()
   }
 }

@@ -10,12 +10,15 @@ import { OrganizationChartModule, SelectButtonModule, ListboxModule, DropdownMod
 
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ButtonModule } from "primeng/components/button/button";
-import { FormsModule } from '@angular/forms'
+import { FormsModule } from '@angular/forms';
+import { PersonIdComponent } from './world/person-id/person-id.component'
+import { HttpModule } from '@angular/http';
 @NgModule({
   declarations: [
     AppComponent,
     WorldComponent,
     HudComponent,
+    PersonIdComponent,
     
   ],
   imports: [
@@ -28,7 +31,8 @@ import { FormsModule } from '@angular/forms'
     DropdownModule,
     ListboxModule,
     PanelModule,
-    DialogModule
+    DialogModule,
+    HttpModule,
   ],
   providers: [TimeService, PopulationService],
   bootstrap: [AppComponent]

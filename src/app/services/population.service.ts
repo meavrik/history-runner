@@ -5,8 +5,8 @@ import { BehaviorSubject, Observable } from 'rxjs/Rx';
 import { Genome } from '../life/genome';
 import { Tribe } from '../tribe/tribe';
 import { UtilsService } from './utils.service';
-
-const tribesDB: any[] = [
+import { Http } from "@angular/http";
+/* const tribesDB: any[] = [
   {
     tribe: 'Hobbit',
     familes: [
@@ -87,7 +87,7 @@ const tribesDB: any[] = [
       female: ['Rachel', 'Leah', 'Dana', 'Sara', 'Miryam', 'Dafna', 'Vered', 'Ester', 'Neomi', 'Sarai', 'Revka', 'Bat-sheva', 'Dvora', 'Hagar']
     }
   }
-]
+] */
 
 @Injectable()
 export class PopulationService {
@@ -97,40 +97,53 @@ export class PopulationService {
   peoples: Person[] = [];
   peoplesAlive: Person[] = [];
 
-  tribes: Tribe[] = [];
+  tribes: Tribe[];
   dataStore: any = {
     tribes: []
   }
 
-  constructor() {
-    tribesDB.forEach(tribeData => {
-      this.tribes.push(new Tribe(tribeData));
-    })
+  gameData: any;
 
-    this._tribesBS.next(Object.assign({}, this).tribes);
-
-
+  constructor(private http: Http) {
+    this.http.get('./assets/gameData.json').map(res => res.json()).subscribe(res => {
+      this.gameData = res;
+      this.tribes = [];
+      this.gameData.tribes.forEach(tribeData => {
+        this.tribes.push(new Tribe(tribeData));
+      })
+      
+      this._tribesBS.next(Object.assign({}, this).tribes);
+    });
 
     this.population.subscribe(people => {
-      this.tribes.forEach(tribe => {
 
-        if (tribe) {
-          tribe.peoples = people.filter(person => person.tribe.name == tribe.name);
-          tribe.womans = tribe.peoples.filter(person => person.sex == "female");
-          tribe.mans = tribe.peoples.filter(person => person.sex == "male");
-          tribe.kids = tribe.peoples.filter(person => person.isChild);
+      if (this.tribes) {
 
-          if (!tribe.king) {
-            tribe.selectAKing()
+        this.tribes.forEach(tribe => {
+
+          if (tribe) {
+            tribe.peoples = people.filter(person => person.tribe.name == tribe.name);
+            tribe.womans = tribe.peoples.filter(person => person.sex == "female");
+            tribe.mans = tribe.peoples.filter(person => person.sex == "male");
+            tribe.kids = tribe.peoples.filter(person => person.isChild);
+
+            if (!tribe.king) {
+              tribe.selectAKing()
+            }
           }
-        }
-      })
+        })
+      }
+
     })
   }
 
   get population(): Observable<Person[]> { return this._population.asObservable() }
   get tribesObservable(): Observable<Tribe[]> { return this._tribesBS.asObservable() }
   get message(): Observable<any> { return this._message.asObservable() }
+
+  foundNewTribe() {
+
+  }
 
   generateNewPerson(parent1: Person, parent2: Person, age: number = 0) {
 
@@ -151,15 +164,14 @@ export class PopulationService {
     }
 
     person.born(parent1, parent2);
-
     //person.tribe.peoples.push(person)
     this.peoples.push(person);
-    this._population.next(this.peoples);
 
-
-    if (age == 0) {
-      this.alertNewMessage('New Born Baby', person.fullName + ' is the first born in our new tribe')
+    if (age == 0 && !person.tribe.kids.length) {
+      this.alertNewMessage('First Born Baby to the ' + person.tribe.name + "'s", person.fullName + ' is the first born in our new tribe')
     }
+
+    this._population.next(this.peoples);
   }
 
   newMonth() {
@@ -195,7 +207,6 @@ export class PopulationService {
     this.peoples.splice(this.peoples.indexOf(person), 1);
     this._population.next(this.peoples);
   }
-
 
   alertNewMessage(title: string, txt: string) {
     this._message.next({ title: title, content: txt });

@@ -1,0 +1,12 @@
+<div class="card">
+  <div class="title">
+    <img [src]="person.sex=='male'?'assets/avatar-male.png':'assets/avatar-female.png'" alt="face" height="42" width="42"/>
+    <!-- <i [class]="person.sex=='male'?'fa fa-mars':'fa fa-venus'" aria-hidden="true"></i> -->
+    <b>{{person.fullName}} <span *ngIf="person.maidenName">({{person.maidenName}})</span></b>
+
+  </div>
+  <p><small> {{person.sex}} age {{person.age}} with {{person.health}}% health</small></p>
+
+  <small *ngIf="person.spouse">married to {{person.spouse.fullName}} childrens {{person.childrens.length}} ({{person.fertility}})
+</small>
+</div>

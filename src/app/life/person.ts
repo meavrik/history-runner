@@ -114,30 +114,6 @@ export class Person {
         return this.firstName + ' ' + this.lastName;
     }
 
-    /* setNewMonth() {
-
-        if (!this.alive) return;
-        if (this.canHaveChildren && this.spouse) {
-            this.tryToBringChild();
-        } else {
-            if (this.pregnant) {
-                if (this.pregnant >= 10) {
-                    this.pregnant = 0;
-                    this.giveBirth();
-                } else {
-                    this.pregnant++;
-                }
-            }
-        }
-    }
-
-    setNewYear() {
-        if (!this.alive) return;
-        this.age++;
-
-        
-    } */
-
     getMarried(person: Person) {
         this.spouse = person;
         person.spouse = this;
@@ -184,7 +160,7 @@ export class Person {
 
     set age(value: number) {
         this._age = value;
-
+        if (!this.alive) return;
         if (this._age > 12 && this._age <= 30 && this.fertility < 100) {
             this.fertility += UtilsService.randomNumber(1, 10);
             if (this.fertility > 100) this.fertility = 0;

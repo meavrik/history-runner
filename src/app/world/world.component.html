@@ -12,32 +12,20 @@
 
     <!-- <p-organizationChart [value]="data"></p-organizationChart> -->
 
-    <div style="display:flex;justify-content:space-around">
+    <div *ngIf="popuplationService" style="display:flex;">
 
-        <div *ngFor="let tribe of popuplationService.tribes">
-            <p-panel>
-                <p-header>
-                    <h3>{{tribe.name}} | <small>king : {{tribe.king.fullName}}</small></h3>
-                    <p>Population {{tribe.peoples.length}} ({{tribe.kids.length}} kids)</p>
-                </p-header>
-                <div style="display:flex;flex-wrap:wrap">
-                    <div class="card" *ngFor="let person of tribe.peoples">
-                        <!-- <p>TRIBE : {{person.tribe.name}}</p> -->
-                        <div style="padding:5px;background-color:cyan">
-                            <i [class]="person.sex=='male'?'fa fa-mars':'fa fa-venus'" aria-hidden="true"></i>
-                            <b>{{person.fullName}} </b>
-
-                        </div>
-                        <p><small> {{person.sex}} age {{person.age}} with {{person.health}}% health</small></p>
-
-                        <small *ngIf="person.spouse">married to {{person.spouse.fullName}} childrens {{person.childrens.length}} ({{person.fertility}})
-                        </small>
-                        <!--  <li *ngFor="let item of person.genome.chromosomes"> 
-                        {{item.type}} : {{item.value}} 
-                    </li>   -->
+        <div *ngFor="let tribe of popuplationService.tribes" style="flex-grow:1;width:33%">
+            <div *ngIf="tribe">
+                <p-panel>
+                    <p-header>
+                        <h3 *ngIf="tribe.king">{{tribe.name}} | <small>king : {{tribe.king.fullName}}</small></h3>
+                        <p *ngIf="tribe.peoples">Population {{tribe.peoples.length}} ({{tribe.kids.length}} kids)</p>
+                    </p-header>
+                    <div style="display:flex;flex-flow:row wrap;justify-content:space-around">
+                        <app-person-id *ngFor="let person of tribe.peoples" [person]=person></app-person-id>
                     </div>
-                </div>
-            </p-panel>
+                </p-panel>
+            </div>
         </div>
     </div>
 
