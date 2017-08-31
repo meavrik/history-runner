@@ -1,3 +1,4 @@
+import { House } from './../tribe/buildings/house';
 
 import { Chromosome } from 'app/life/chromosome';
 import { Genome } from './genome';
@@ -31,6 +32,8 @@ export class Person {
     maidenName: string = "";
     founder:boolean;
     generation:number;
+    house:House;
+    foodNeededPerMonth:number;
     // populationService: PopulationService;
 
     constructor() {
@@ -208,5 +211,9 @@ export class Person {
 
     get isInfant(): boolean {
         return this.age < 3 ? true : false;
+    }
+
+    get isHomeless():boolean {
+        return this.house?false:true;
     }
 }

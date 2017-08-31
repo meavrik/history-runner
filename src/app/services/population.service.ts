@@ -6,7 +6,7 @@ import { Genome } from '../life/genome';
 import { Tribe } from '../tribe/tribe';
 import { UtilsService } from './utils.service';
 import { Http } from "@angular/http";
-/* const tribesDB: any[] = [
+const tribesDB: any[] = [
   {
     tribe: 'Hobbit',
     familes: [
@@ -87,7 +87,7 @@ import { Http } from "@angular/http";
       female: ['Rachel', 'Leah', 'Dana', 'Sara', 'Miryam', 'Dafna', 'Vered', 'Ester', 'Neomi', 'Sarai', 'Revka', 'Bat-sheva', 'Dvora', 'Hagar']
     }
   }
-] */
+]
 
 @Injectable()
 export class PopulationService {
@@ -105,15 +105,15 @@ export class PopulationService {
   gameData: any;
 
   constructor(private http: Http) {
-    this.http.get('./assets/gameData.json').map(res => res.json()).subscribe(res => {
-      this.gameData = res;
+    //this.http.get('./assets/gameData.json').map(res => res.json()).subscribe(res => {
+     // this.gameData = res;
       this.tribes = [];
-      this.gameData.tribes.forEach(tribeData => {
+      tribesDB.forEach(tribeData => {
         this.tribes.push(new Tribe(tribeData));
       })
       
       this._tribesBS.next(Object.assign({}, this).tribes);
-    });
+   // });
 
     this.population.subscribe(people => {
 

@@ -1,6 +1,9 @@
 <div *ngIf="message">
     <p-dialog [header]="message.title" [(visible)]="message" dismissableMask="true" modal="true" (onShow)="onShow()" (onHide)="onHide()">
-        {{message.content}}
+        <div style="margin-bottom:50px">
+            {{message.content}}
+        </div>
+        <button style="width:98%;margin:1px " pButton type="button " label="OK" class="ui-button-success" (click)="message=null;onHide()"></button>
     </p-dialog>
 </div>
 
@@ -19,7 +22,7 @@
                 <p-panel>
                     <p-header>
                         <h3 *ngIf="tribe.king">{{tribe.name}} | <small>king : {{tribe.king.fullName}}</small></h3>
-                        <p *ngIf="tribe.peoples">Population {{tribe.peoples.length}} ({{tribe.kids.length}} kids)</p>
+                        <p *ngIf="tribe.peoples">Population {{tribe.peoples.length}} ({{tribe.kids.length}} kids | <span>woman : {{((tribe.womans.length * 100)/tribe.peoples.length).toFixed()}}% , man : {{((tribe.mans.length * 100)/tribe.peoples.length).toFixed()}}% )</span></p>
                     </p-header>
                     <div style="display:flex;flex-flow:row wrap;justify-content:space-around">
                         <app-person-id *ngFor="let person of tribe.peoples" [person]=person></app-person-id>

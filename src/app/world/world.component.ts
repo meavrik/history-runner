@@ -56,11 +56,11 @@ export class WorldComponent implements OnInit {
   } */
 
   onHide() {
-    this.time.pause=false;
+    this.time.pause = false;
   }
 
   onShow() {
-    this.time.pause=true;
+    this.time.pause = true;
   }
 
 }

@@ -8,9 +8,9 @@ export class Tribe {
     familes: string[];
     names: any;
     peoples: Person[] = [];
-    womans: Person[];
-    mans: Person[];
-    kids: Person[];
+    womans: Person[] = []
+    mans: Person[] = []
+    kids: Person[] = []
     employed: Person[] = [];
     unemployed: Person[] = [];
     resources: any[];
@@ -19,8 +19,10 @@ export class Tribe {
     scienePoints: number;
     constructionPoints: number;
 
-
     houses: House[] = [];
+
+    actions: any[] = [];
+
 
     constructor(data: any) {
         this.name = data.tribe;
