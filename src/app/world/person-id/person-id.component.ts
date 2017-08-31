@@ -8,10 +8,23 @@ import { Person } from 'app/life/person';
 })
 export class PersonIdComponent implements OnInit {
 
-  @Input() person:Person;
+  @Input() person: Person;
+
+
+  works = [{ label: 'food', value: 'food' },
+  { label: 'build', value: 'build' },
+  { label: 'science', value: 'science' },
+  { label: 'defence', value: 'defence' },
+  ];
+
   constructor() { }
 
   ngOnInit() {
+    
+  }
+
+  onWorkChange() {
+
   }
 
 }

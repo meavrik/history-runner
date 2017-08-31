@@ -6,7 +6,7 @@ import { WorldComponent } from './world/world.component';
 import { HudComponent } from './hud/hud.component';
 import { TimeService } from './services/time.service';
 import { PopulationService } from './services/population.service';
-import { OrganizationChartModule, SelectButtonModule, ListboxModule, DropdownModule, PanelModule, DialogModule } from 'primeng/primeng';
+import { OrganizationChartModule, SelectButtonModule, ListboxModule, DropdownModule, PanelModule, DialogModule, OverlayPanelModule } from 'primeng/primeng';
 
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ButtonModule } from "primeng/components/button/button";
@@ -33,6 +33,7 @@ import { HttpModule } from '@angular/http';
     PanelModule,
     DialogModule,
     HttpModule,
+    OverlayPanelModule
   ],
   providers: [TimeService, PopulationService],
   bootstrap: [AppComponent]

@@ -15,11 +15,13 @@ export class Person {
     tribe: Tribe;
     father: Person;
     mother: Person;
+    _isRoyal: boolean;
+
     firstName: string = ""
     lastName: string = "";
     sex: string;
     genome: Genome;
-    work: string;
+    work: any;
     spouse: Person;
     childrens: Person[] = [];
     birthDate: Date;
@@ -30,22 +32,80 @@ export class Person {
     education: number;
     happiness: number;
     maidenName: string = "";
-    founder:boolean;
-    generation:number;
-    house:House;
-    foodNeededPerMonth:number;
-    // populationService: PopulationService;
+    founder: boolean;
+    generation: number;
+    house: House;
+
 
     constructor() {
-        //let injector = ReflectiveInjector.resolveAndCreate([PopulationService]);
-        //this.populationService = injector.get(PopulationService);
+
+    }
+
+    set isRoyal(value: boolean) {
+
+        if (this._isRoyal != value) {
+            if (this.spouse) this.spouse.isRoyal = value;
+            this._isRoyal = value;
+
+            this.childrens.forEach(kid => kid.isRoyal = value)
+        }
+    }
+
+    get isRoyal():boolean {
+        return this._isRoyal;
+    }
+
+    get isHeadOfHouse(): boolean {
+        if (this.sex == "male" && this.spouse) return true;
+
+        return false;
+    }
+
+    get produceWorkForcePerDay(): number {
+        if (this.work && this.work.type == 'build') {
+            return 5000 + (this.myStrength * 10) + (this.myDexterety * 5)
+        }
+        return 0;
+    }
+
+    get produceFoodPerDay(): number {
+        if (this.work && this.work.type == 'food') {
+            return 2500 + (this.myStrength * 10) + (this.myDexterety * 5)
+        }
+        return 0;
+    }
+
+    get produceSiencePerDay(): number {
+        if (this.work && this.work.type == 'sience') {
+            return 5000 + (this.myIntelgence * 10) + (this.myWisdom * 5)
+        }
+        return 0;
+    }
+
+
+    get myStrength(): number {
+        let chromo: Chromosome = this.genome.getChromosomeByName('str')
+        return chromo ? chromo.value : 0;
+    }
+
+    get myDexterety(): number {
+        let chromo: Chromosome = this.genome.getChromosomeByName('dex')
+        return chromo ? chromo.value : 0;
+    }
+
+    get myIntelgence(): number {
+        return this.genome.getChromosomeByName('int').value
+    }
+
+    get myWisdom(): number {
+        return this.genome.getChromosomeByName('wis').value
     }
 
     born(parent1: Person = null, parent2: Person = null) {
         this.father = parent1;
         this.mother = parent2;
         this.genome = (this.mother && this.mother.genome) ? new Genome(this.father.genome, this.mother.genome) : new Genome();
-        this.fertility = 0;
+        //this.fertility = this.age==0;
         this.sex = Math.round(Math.random()) ? "male" : "female";
         //this.age = 0;
         this.health = 100;
@@ -55,6 +115,7 @@ export class Person {
         this.lastName = this.tribe.generateLastName(this.father);
         this.alive = true;
         this.happiness = 100;
+        this.isRoyal = (parent1.isRoyal || parent2.isRoyal) ? true : false;
         console.info(this.fullName + ' IS BORN!');
     }
 
@@ -213,7 +274,36 @@ export class Person {
         return this.age < 3 ? true : false;
     }
 
-    get isHomeless():boolean {
-        return this.house?false:true;
+    get isHomeless(): boolean {
+        return this.house ? false : true;
+    }
+
+    get caloriesNeededPerDay(): number {
+        if (this.sex == "male") {
+            if (this.isChild) {
+                return 1500;
+            } else {
+                return 2400;
+            }
+        } else if (this.sex == "female") {
+            if (this.pregnant) {
+                return 2400;
+            }
+            if (this.isChild) {
+                return 1000;
+            } else {
+                return 1800;
+            }
+        }
+    }
+
+
+    get needs():any[] {
+
+        let needsArr = []
+        if (!this.house) needsArr.push('house')
+        if (!this.spouse) needsArr.push('love')
+
+        return needsArr
     }
 }

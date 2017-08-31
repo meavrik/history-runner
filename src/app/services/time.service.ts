@@ -6,7 +6,7 @@ import { PopulationService } from './population.service';
 export class TimeService {
 
   year: number = 100;
-  month: number = 1;
+  month: number = 0;
   startTime: Boolean = false;
   _date: BehaviorSubject<Date> = <BehaviorSubject<Date>>new BehaviorSubject(null);
   _currentDate: Date;
@@ -18,7 +18,10 @@ export class TimeService {
 
   constructor(private populationService: PopulationService) {
 
-    this.timer = Observable.timer(0, 10);
+    this._currentDate = new Date()
+    this._currentDate.setFullYear(this.year, this.month,1);
+
+    this.timer = Observable.timer(0, 100);
     this.timer.subscribe(t => {
       if (!this._pause) {
 
@@ -34,6 +37,9 @@ export class TimeService {
         this.month = date.getMonth();
         date.setDate(t);
 
+        this._currentDate = date;
+
+        this.populationService.newDay();
         if (date.getDate() == 1) {
           this.populationService.newMonth();
 
@@ -42,7 +48,6 @@ export class TimeService {
           }
         }
 
-        this._currentDate = date
         this._date.next(date);
       }
     });
@@ -60,9 +65,9 @@ export class TimeService {
     this.pause = false;
   }
 
- /*  get currentDate(): Date {
+  get currentDate(): Date {
     return this._currentDate;
-  } */
+  }
 
   get date(): Observable<Date> { return this._date.asObservable() }
 

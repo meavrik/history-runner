@@ -51,10 +51,12 @@ export class Genome {
 
 
     getChromosomeByName(name: string): Chromosome {
+
+        let found:Chromosome = null;
         this.chromosomes.forEach(chromosome => {
-            if (name == chromosome.type) return chromosome;
+            if (name == chromosome.type) found= chromosome;
         });
 
-        return null;
+        return found;
     }
 }

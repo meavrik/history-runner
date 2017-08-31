@@ -76,7 +76,10 @@ const workDB: any = [
 ]
 
 export class Work {
+    producePerDay:number;
 
+
+    
     //static types: string[] = ['construction', 'food', 'army', 'art', 'resources']
 
 

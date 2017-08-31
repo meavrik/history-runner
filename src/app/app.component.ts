@@ -33,9 +33,11 @@ export class AppComponent {
   }
 
   statGame() {
-    for (var i = 0; i < 30; i++) {
+    /* for (var i = 0; i < 30; i++) {
       this.populationService.generateNewPerson(new Person(), new Person(), UtilsService.randomNumber(15, 35));
-    }
+    } */
+
+    this.populationService.initTribes()
     this.gameStarted = true;
     this.time.startHistory()
   }

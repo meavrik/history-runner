@@ -6,6 +6,7 @@ import { Genome } from '../life/genome';
 import { Tribe } from '../tribe/tribe';
 import { UtilsService } from './utils.service';
 import { Http } from "@angular/http";
+import { TimeService } from './time.service';
 const tribesDB: any[] = [
   {
     tribe: 'Hobbit',
@@ -40,6 +41,7 @@ const tribesDB: any[] = [
     }
   },
   {
+
     tribe: 'Klingon',
     familes: [
       'Gordek',
@@ -81,6 +83,8 @@ const tribesDB: any[] = [
       'Ben-$',
       'Israel',
       'Dov',
+      'Shalom',
+      'Shemesh',
     ],
     names: {
       male: ['Avraham', 'Yosef', 'Dan', 'Yakov', 'Shoul', 'Alon', 'Dor', 'Moshe', 'Naftali', 'Oren', 'Itzhak', 'Youda', 'Israel', 'Kalev', 'Shmoel'],
@@ -106,14 +110,14 @@ export class PopulationService {
 
   constructor(private http: Http) {
     //this.http.get('./assets/gameData.json').map(res => res.json()).subscribe(res => {
-     // this.gameData = res;
-      this.tribes = [];
-      tribesDB.forEach(tribeData => {
-        this.tribes.push(new Tribe(tribeData));
-      })
-      
-      this._tribesBS.next(Object.assign({}, this).tribes);
-   // });
+    // this.gameData = res;
+    this.tribes = [];
+    tribesDB.forEach(tribeData => {
+      this.tribes.push(new Tribe(tribeData));
+    })
+
+    this._tribesBS.next(Object.assign({}, this).tribes);
+    // });
 
     this.population.subscribe(people => {
 
@@ -127,15 +131,41 @@ export class PopulationService {
             tribe.mans = tribe.peoples.filter(person => person.sex == "male");
             tribe.kids = tribe.peoples.filter(person => person.isChild);
 
-            if (!tribe.king) {
+            /* if (!tribe.king) {
               tribe.selectAKing()
-            }
+            } */
           }
         })
       }
 
     })
   }
+
+
+  initTribes(): any {
+    //for (var i = 0; i < 30; i++) {
+    this.tribes.forEach(tribe => {
+
+      for (var i = 0; i < 12; i++) {
+        let father: Person = new Person();
+        father.tribe = tribe;
+        father.sex = 'male'
+        let mother: Person = new Person();
+        mother.tribe = tribe;
+        mother.sex = 'female';
+        this.generateNewPerson(father, mother, UtilsService.randomNumber(15, 35));
+      }
+
+      
+    })
+
+
+    this.tribes.forEach(tribe => {
+      tribe.selectAKing();
+    })
+    //}
+  }
+
 
   get population(): Observable<Person[]> { return this._population.asObservable() }
   get tribesObservable(): Observable<Tribe[]> { return this._tribesBS.asObservable() }
@@ -157,7 +187,12 @@ export class PopulationService {
       person.generation = 1;
       if (person.age > 13) person.fertility = UtilsService.randomNumber(20, 100);
       if (person.age > 30) person.health = UtilsService.randomNumber(100 - person.age, 95);
+
+      //person.birthDate = new Date()
+      //person.birthDate.setFullYear(100 - person.age, UtilsService.randomNumber(0, 12), UtilsService.randomNumber(1, 28));
+
     } else {
+      person.fertility = 0;
       person.generation = Math.min(parent1.generation, parent2.generation);
       parent1.childrens.push(person);
       parent2.childrens.push(person);
@@ -174,7 +209,23 @@ export class PopulationService {
     this._population.next(this.peoples);
   }
 
+
+  newDay() {
+    this.tribes.forEach(tribe => {
+      tribe.newDay()
+    })
+  }
+
+
+
   newMonth() {
+
+    this.tribes.forEach(tribe => {
+      tribe.newMonth()
+    })
+
+
+
     this.peoplesAlive = this.peoples.filter(person => person.alive);
     this.peoplesAlive.forEach(person => {
 
