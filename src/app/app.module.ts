@@ -13,12 +13,14 @@ import { ButtonModule } from "primeng/components/button/button";
 import { FormsModule } from '@angular/forms';
 import { PersonIdComponent } from './world/person-id/person-id.component'
 import { HttpModule } from '@angular/http';
+import { TribeViewComponent } from './world/tribe-view/tribe-view.component';
 @NgModule({
   declarations: [
     AppComponent,
     WorldComponent,
     HudComponent,
     PersonIdComponent,
+    TribeViewComponent,
     
   ],
   imports: [

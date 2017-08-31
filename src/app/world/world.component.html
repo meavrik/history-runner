@@ -19,16 +19,7 @@
 
         <div *ngFor="let tribe of popuplationService.tribes" style="flex-grow:1;width:33%">
             <div *ngIf="tribe">
-                <p-panel>
-                    <p-header>
-                        <h3 *ngIf="tribe.king">{{tribe.name}} | <small>king : {{tribe.king.fullName}}</small></h3>
-                        <p *ngIf="tribe.peoples">Population {{tribe.peoples.length}} ({{tribe.kids.length}} kids | <span>woman : {{((tribe.womans.length * 100)/tribe.peoples.length).toFixed()}}% , man : {{((tribe.mans.length * 100)/tribe.peoples.length).toFixed()}}% )</span></p>
-                        <p>food = {{tribe.food | number}} ( needed per day  : {{tribe.foodNeeded | number}} | produce per day {{tribe.produceFoodPerDay |number}})</p>
-                    </p-header>
-                    <div style="display:flex;flex-flow:row wrap;justify-content:space-around">
-                        <app-person-id *ngFor="let person of tribe.peoples" [person]=person></app-person-id>
-                    </div>
-                </p-panel>
+                <app-tribe-view [tribe]="tribe"></app-tribe-view>
             </div>
         </div>
     </div>
