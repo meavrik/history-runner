@@ -14,8 +14,8 @@ export class Genome {
 
     constructor(public fatherChromosomes: Chromosome[] = null, public motherChromosomes: Chromosome[] = null) {
 
-        if (!this.fatherChromosomes) this.fatherChromosomes = this.generateNewGenome();
-        if (!this.motherChromosomes) this.motherChromosomes = this.generateNewGenome();
+        if (!this.fatherChromosomes) this.fatherChromosomes = this.generateParentGenome();
+        if (!this.motherChromosomes) this.motherChromosomes = this.generateParentGenome();
 
         attributes.forEach((attribute, index) => {
             
@@ -55,7 +55,7 @@ export class Genome {
         return newSet;
     }
 
-    generateNewGenome(): Chromosome[] {
+    generateParentGenome(): Chromosome[] {
         let chromosomes: Chromosome[] = [];
 
         attributes.forEach((attribute, index) => {
