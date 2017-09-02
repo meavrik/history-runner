@@ -4,9 +4,9 @@ import { Genome } from './genome';
 
 export class Chromosome {
     valueRangeForMatch: IRange
-    _value: number;
+    value: any;
 
-    get value(): number {
+    /* get value(): number {
         return this._value;
     }
 
@@ -17,10 +17,17 @@ export class Chromosome {
         let to: number = UtilsService.randomNumber(from, from+10);
 
         this.valueRangeForMatch = { from: from, to: to };
-    }
+    } */
 
-    constructor(public type: string, val: number = 0) {
+    constructor(public type: string, val: any) {
         this.value = val;
+
+        if (type != 'sex') {
+            let from: number = UtilsService.randomNumber(Math.max(this.value - 5, 0), this.value + 5);
+            let to: number = UtilsService.randomNumber(from, from + 10);
+
+            this.valueRangeForMatch = { from: from, to: to };
+        }
     }
 
 }

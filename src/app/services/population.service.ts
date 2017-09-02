@@ -141,65 +141,36 @@ export class PopulationService {
     })
   }
 
-
-  initTribes(): any {
-    //for (var i = 0; i < 30; i++) {
+  initTribes() {
     this.tribes.forEach(tribe => {
+      const totalFounders: number = 12;
+      for (var i = 0; i < totalFounders; i++) {
+        let father: Person = new Person(tribe);
+        let mother: Person = new Person(tribe, 'female');
 
-      for (var i = 0; i < 12; i++) {
-        let father: Person = new Person();
-        father.tribe = tribe;
-        father.sex = 'male'
-        let mother: Person = new Person();
-        mother.tribe = tribe;
-        mother.sex = 'female';
         this.generateNewPerson(father, mother, UtilsService.randomNumber(15, 35));
+
+        if (i == (totalFounders - 1)) {
+          tribe.selectAKing();
+        }
       }
-
-      
     })
 
-
-    this.tribes.forEach(tribe => {
-      tribe.selectAKing();
-    })
-    //}
+    /*  this.tribes.forEach(tribe => {
+       tribe.selectAKing();
+     }) */
   }
-
 
   get population(): Observable<Person[]> { return this._population.asObservable() }
   get tribesObservable(): Observable<Tribe[]> { return this._tribesBS.asObservable() }
   get message(): Observable<any> { return this._message.asObservable() }
 
-  foundNewTribe() {
-
-  }
-
   generateNewPerson(parent1: Person, parent2: Person, age: number = 0) {
 
-    let person: Person = new Person();
+    let person: Person = new Person(parent1.tribe);
+    //person.tribe = parent1.tribe ? parent1.tribe : this.tribes[Math.floor(Math.random() * this.tribes.length)];
+    person.born(parent1, parent2, age);
 
-    person.tribe = parent1.tribe ? parent1.tribe : this.tribes[Math.floor(Math.random() * this.tribes.length)];
-    person.age = age;
-
-    if (age != 0) {
-      person.founder = true;
-      person.generation = 1;
-      if (person.age > 13) person.fertility = UtilsService.randomNumber(20, 100);
-      if (person.age > 30) person.health = UtilsService.randomNumber(100 - person.age, 95);
-
-      //person.birthDate = new Date()
-      //person.birthDate.setFullYear(100 - person.age, UtilsService.randomNumber(0, 12), UtilsService.randomNumber(1, 28));
-
-    } else {
-      person.fertility = 0;
-      person.generation = Math.min(parent1.generation, parent2.generation);
-      parent1.childrens.push(person);
-      parent2.childrens.push(person);
-    }
-
-    person.born(parent1, parent2);
-    //person.tribe.peoples.push(person)
     this.peoples.push(person);
 
     if (age == 0 && !person.tribe.kids.length) {
@@ -209,14 +180,11 @@ export class PopulationService {
     this._population.next(this.peoples);
   }
 
-
   newDay() {
     this.tribes.forEach(tribe => {
       tribe.newDay()
     })
   }
-
-
 
   newMonth() {
 
@@ -224,27 +192,27 @@ export class PopulationService {
       tribe.newMonth()
     })
 
-
-
     this.peoplesAlive = this.peoples.filter(person => person.alive);
     this.peoplesAlive.forEach(person => {
 
       if (person.health <= 0) {
         this.kill(person);
-      }
-      if (person.canHaveChildren && person.spouse) {
-        person.tryToBringChild();
       } else {
-        if (person.pregnant) {
-          if (person.pregnant >= 10) {
-            person.pregnant = 0;
-            this.generateNewPerson(person.spouse, person);
+        if (person.canHaveChildren && person.spouse) {
+          person.tryToBringChild();
+        } else {
+          if (person.pregnant) {
+            if (person.pregnant >= 10) {
+              person.pregnant = 0;
+              this.generateNewPerson(person.spouse, person);
 
-          } else {
-            person.pregnant++;
+            } else {
+              person.pregnant++;
+            }
           }
         }
       }
+
     })
   }
 

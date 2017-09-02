@@ -36,10 +36,49 @@ export class Person {
     generation: number;
     house: House;
 
+    weight: number;
+    height: number;
 
-    constructor() {
-
+    constructor(tribe: Tribe = null, sex: string = 'male') {
+        this.tribe = tribe;
+        this.sex = sex;
     }
+
+    born(parent1: Person = null, parent2: Person = null, age: number = 0) {
+        this.age = age;
+        if (age != 0) {
+            this.founder = true;
+            this.generation = 1;
+            if (this.age > 13) this.fertility = UtilsService.randomNumber(20, 100);
+            this.health = UtilsService.randomNumber(100 - this.age, 95);
+        } else {
+            this.weight = UtilsService.randomNumber(3, 4);
+            this.height = UtilsService.randomNumber(40, 60);
+            this.fertility = 0;
+            this.health = 100;
+            this.generation = Math.min(parent1.generation, parent2.generation);
+            parent1.childrens.push(this);
+            parent2.childrens.push(this);
+        }
+
+        this.father = parent1;
+        this.mother = parent2;
+        if (this.father.genome) {
+            this.genome = new Genome(this.father.genome.chromosomesForReproduction, this.mother.genome.chromosomesForReproduction);
+        } else {
+            this.genome = new Genome()
+        }
+        
+        this.sex = this.genome.chromosomes[6].value == 'x'?'female':'male';
+        this.childrens = [];
+        this.firstName = this.tribe.generateFirstName(this);
+        this.lastName = this.tribe.generateLastName(this.father);
+        this.alive = true;
+        this.happiness = 100;
+        this.isRoyal = (parent1.isRoyal || parent2.isRoyal) ? true : false;
+        console.info(this.fullName + ' IS BORN!');
+    }
+
 
     set isRoyal(value: boolean) {
 
@@ -51,7 +90,7 @@ export class Person {
         }
     }
 
-    get isRoyal():boolean {
+    get isRoyal(): boolean {
         return this._isRoyal;
     }
 
@@ -101,24 +140,6 @@ export class Person {
         return this.genome.getChromosomeByName('wis').value
     }
 
-    born(parent1: Person = null, parent2: Person = null) {
-        this.father = parent1;
-        this.mother = parent2;
-        this.genome = (this.mother && this.mother.genome) ? new Genome(this.father.genome, this.mother.genome) : new Genome();
-        //this.fertility = this.age==0;
-        this.sex = Math.round(Math.random()) ? "male" : "female";
-        //this.age = 0;
-        this.health = 100;
-        this.childrens = [];
-
-        this.firstName = this.tribe.generateFirstName(this);
-        this.lastName = this.tribe.generateLastName(this.father);
-        this.alive = true;
-        this.happiness = 100;
-        this.isRoyal = (parent1.isRoyal || parent2.isRoyal) ? true : false;
-        console.info(this.fullName + ' IS BORN!');
-    }
-
     get availableForMatch(): boolean {
         if (this.spouse) return false;
         if (this.age < 13 || this.age > 60) return false;
@@ -154,9 +175,9 @@ export class Person {
         }
         this.genome.chromosomes.forEach((chromosome, index) => {
             let otherChromo: Chromosome = other.genome.chromosomes[index]
-            if (otherChromo.value >= chromosome.valueRangeForMatch.from &&
+            if (otherChromo.type!="sex" && otherChromo.value >= chromosome.valueRangeForMatch.from &&
                 otherChromo.value <= chromosome.valueRangeForMatch.to) {
-                //debugger
+ 
                 console.log(this.firstName + ' is looking for love');
                 inlove = true;
             }
@@ -225,16 +246,13 @@ export class Person {
     set age(value: number) {
         this._age = value;
         if (!this.alive) return;
+
         if (this._age > 12 && this._age <= 30 && this.fertility < 100) {
             this.fertility += UtilsService.randomNumber(1, 10);
             if (this.fertility > 100) this.fertility = 0;
         } else if (this.fertility > 0) {
             this.fertility -= UtilsService.randomNumber(1, 10);
             if (this.fertility < 0) this.fertility = 0;
-        }
-
-        if (this._age > 25) {
-            this.health -= UtilsService.randomNumber(0, 5);
         }
 
         if (this._age > 13) {
@@ -244,6 +262,14 @@ export class Person {
             }
         }
 
+        if (this._age < 18) {
+            this.weight += 5;
+            this.height += 5;
+        }
+
+        if (this._age > 25) {
+            this.health -= UtilsService.randomNumber(0, 5);
+        }
     }
 
     get health(): number {
@@ -252,13 +278,7 @@ export class Person {
 
     set health(value: number) {
         this._health = value;
-
-        /* if (this._health <= 0) {
-            this.health = 0;
-            this.die();
-        } */
     }
-
 
     die() {
         console.warn(this.fullName + ' HAS DIED! :( at the age of ' + this.age);
@@ -298,7 +318,7 @@ export class Person {
     }
 
 
-    get needs():any[] {
+    get needs(): any[] {
 
         let needsArr = []
         if (!this.house) needsArr.push('house')
