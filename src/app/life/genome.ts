@@ -3,8 +3,20 @@ import { ChromosomeSex } from './chromosome-sex';
 import { Chromosome } from 'app/life/chromosome';
 import { UtilsService } from '../services/utils.service';
 
+const SRENGTH: string = 'str';
+const DEXTERITY: string = 'dex';
+const CONSTITUTION: string = 'con';
+const INTELLIGENCE: string = 'int';
+const WISDOM: string = 'wis';
+const CHARISMA: string = 'cha';
+const SEX: string = 'sex';
+
 //strength(כוח), dexterity(זריזות),Constitution(חוסן), intelligent,wisdom,charisma
-const attributes: string[] = ['str', 'dex', 'con', 'int', 'wis', 'cha', 'sex'];
+const attributes: string[] = [SRENGTH, DEXTERITY, CONSTITUTION, INTELLIGENCE, WISDOM, CHARISMA, SEX];
+
+interface Map<T> {
+    [K: string]: T;
+}
 
 export class Genome {
     static totalAttValue: number = Math.round(Math.random() * 10) + 60;
@@ -12,14 +24,20 @@ export class Genome {
     chromosomes: Chromosome[] = [];
     sexChromosome: Chromosome;
 
+
+
+    chromosomesDict: Map<Chromosome> = {};
+
+
     constructor(public fatherChromosomes: Chromosome[] = null, public motherChromosomes: Chromosome[] = null) {
+        this.chromosomesDict[SEX]
 
         if (!this.fatherChromosomes) this.fatherChromosomes = this.generateParentGenome();
         if (!this.motherChromosomes) this.motherChromosomes = this.generateParentGenome();
 
         attributes.forEach((attribute, index) => {
-            
-            let newChromosome:Chromosome;
+
+            let newChromosome: Chromosome;
 
             if (attribute == 'sex') {
                 newChromosome = new Chromosome(attribute, this.fatherChromosomes[index].value);
@@ -68,7 +86,7 @@ export class Genome {
                 if (value == 1) value = -1.5;
                 if (value == 2) value = -2;
                 //chromosomes.push(new Chromosome(attribute, arr[index]))
-                chromosomes.push(new Chromosome(attribute,value))
+                chromosomes.push(new Chromosome(attribute, value))
             }
         })
 
