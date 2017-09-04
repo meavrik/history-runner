@@ -2,17 +2,26 @@ import { ChromosomeSex } from './chromosome-sex';
 
 import { Chromosome } from 'app/life/chromosome';
 import { UtilsService } from '../services/utils.service';
+import { Attributes } from "app/life/attributes.enum";
 
-const SRENGTH: string = 'str';
+/* const SRENGTH: string = 'str';
 const DEXTERITY: string = 'dex';
 const CONSTITUTION: string = 'con';
 const INTELLIGENCE: string = 'int';
 const WISDOM: string = 'wis';
 const CHARISMA: string = 'cha';
-const SEX: string = 'sex';
+const SEX: string = 'sex'; */
 
 //strength(כוח), dexterity(זריזות),Constitution(חוסן), intelligent,wisdom,charisma
-const attributes: string[] = [SRENGTH, DEXTERITY, CONSTITUTION, INTELLIGENCE, WISDOM, CHARISMA, SEX];
+const attributes: string[] = [
+    Attributes.STRENGTH, 
+    Attributes.DEXTERITY,
+    Attributes.CONSTITUTION, 
+    Attributes.INTELLIGENCE, 
+    Attributes.WISDOM, 
+    Attributes.CHARISMA, 
+    Attributes.SEX
+];
 
 interface Map<T> {
     [K: string]: T;
@@ -22,7 +31,7 @@ export class Genome {
     static totalAttValue: number = Math.round(Math.random() * 10) + 60;
 
     chromosomes: Chromosome[] = [];
-    sexChromosome: Chromosome;
+    //sexChromosome: Chromosome;
 
 
 
@@ -30,18 +39,18 @@ export class Genome {
 
 
     constructor(public fatherChromosomes: Chromosome[] = null, public motherChromosomes: Chromosome[] = null) {
-        this.chromosomesDict[SEX]
+ 
 
         if (!this.fatherChromosomes) this.fatherChromosomes = this.generateParentGenome();
         if (!this.motherChromosomes) this.motherChromosomes = this.generateParentGenome();
-
+        
         attributes.forEach((attribute, index) => {
 
             let newChromosome: Chromosome;
 
-            if (attribute == 'sex') {
+            if (attribute == Attributes.SEX) {
                 newChromosome = new Chromosome(attribute, this.fatherChromosomes[index].value);
-                this.sexChromosome = newChromosome;
+                //this.sexChromosome = newChromosome;
             } else {
                 let value;
                 let value1 = this.fatherChromosomes[index].value
@@ -57,8 +66,8 @@ export class Genome {
 
                 newChromosome = new Chromosome(attribute, value);
             }
-
-            this.chromosomes.push(newChromosome)
+            this.chromosomesDict[attribute] = newChromosome;
+           // this.chromosomes.push(newChromosome)
         })
     }
 
@@ -95,11 +104,13 @@ export class Genome {
 
     getChromosomeByName(name: string): Chromosome {
 
-        let found: Chromosome = null;
+        /* let found: Chromosome = null;
         this.chromosomes.forEach(chromosome => {
             if (name == chromosome.type) found = chromosome;
         });
 
-        return found;
+        return found; */
+
+        return this.chromosomesDict[name];
     }
 }
