@@ -1,32 +1,19 @@
 import { UtilsService } from '../services/utils.service';
 import { IRange } from '../utils/range';
 import { Genome } from './genome';
+import { CharAttributes } from 'app/life/attributes.enum';
+import { MAX_ATTRIBUTE_VALUE, CharAttributeTypes } from './attributes.enum';
 
 export class Chromosome {
     valueRangeForMatch: IRange
-    value: any;
 
-    /* get value(): number {
-        return this._value;
-    }
+    constructor(public name: string, public value: any, public type: string = "") {
+        if (type == CharAttributeTypes.CHARACTER) {
+            //let from: number = UtilsService.randomNumber(Math.max(this.value - 5, 0), this.value + 5);
+            //let to: number = UtilsService.randomNumber(from, from + 10);
 
-    set value(v: number) {
-        this._value = v;
-
-        let from: number = UtilsService.randomNumber(Math.max(this._value - 5, 0), this._value + 5);
-        let to: number = UtilsService.randomNumber(from, from+10);
-
-        this.valueRangeForMatch = { from: from, to: to };
-    } */
-
-    constructor(public type: string, val: any) {
-        this.value = val;
-
-        if (type != 'sex') {
-            let from: number = UtilsService.randomNumber(Math.max(this.value - 5, 0), this.value + 5);
-            let to: number = UtilsService.randomNumber(from, from + 10);
-
-            this.valueRangeForMatch = { from: from, to: to };
+            let val: number = UtilsService.randomNumber(2, MAX_ATTRIBUTE_VALUE);
+            this.valueRangeForMatch = { from: val, to: val + 2 };
         }
     }
 

@@ -1,27 +1,44 @@
-import { ChromosomeSex } from './chromosome-sex';
 
 import { Chromosome } from 'app/life/chromosome';
 import { UtilsService } from '../services/utils.service';
-import { Attributes } from "app/life/attributes.enum";
+import { CharAttributes } from 'app/life/attributes.enum';
+import { CharAttributeTypes, MAX_ATTRIBUTE_VALUE } from './attributes.enum';
 
-/* const SRENGTH: string = 'str';
-const DEXTERITY: string = 'dex';
-const CONSTITUTION: string = 'con';
-const INTELLIGENCE: string = 'int';
-const WISDOM: string = 'wis';
-const CHARISMA: string = 'cha';
-const SEX: string = 'sex'; */
+interface IChromosomeData {
+    name: string;
+    type: string;
+}
+interface IGenomeData {
+    chromosomes: IChromosomeData[]
+}
+const genomeData: IGenomeData = {
+    chromosomes: [
+        { name: CharAttributes.SEX, type: CharAttributeTypes.SEX },
+
+        { name: CharAttributes.STRENGTH, type: CharAttributeTypes.CHARACTER },
+        { name: CharAttributes.DEXTERITY, type: CharAttributeTypes.CHARACTER },
+        { name: CharAttributes.CONSTITUTION, type: CharAttributeTypes.CHARACTER },
+        { name: CharAttributes.INTELLIGENCE, type: CharAttributeTypes.CHARACTER },
+        { name: CharAttributes.WISDOM, type: CharAttributeTypes.CHARACTER },
+        { name: CharAttributes.CHARISMA, type: CharAttributeTypes.CHARACTER },
+
+        { name: CharAttributes.WEIGHT, type: CharAttributeTypes.MEASURES },
+        { name: CharAttributes.HEIGHT, type: CharAttributeTypes.MEASURES },
+    ]
+}
 
 //strength(כוח), dexterity(זריזות),Constitution(חוסן), intelligent,wisdom,charisma
-const attributes: string[] = [
-    Attributes.STRENGTH, 
-    Attributes.DEXTERITY,
-    Attributes.CONSTITUTION, 
-    Attributes.INTELLIGENCE, 
-    Attributes.WISDOM, 
-    Attributes.CHARISMA, 
-    Attributes.SEX
-];
+/* const attributesCollection: string[] = [
+    CharAttributes.STRENGTH,
+    CharAttributes.DEXTERITY,
+    CharAttributes.CONSTITUTION,
+    CharAttributes.INTELLIGENCE,
+    CharAttributes.WISDOM,
+    CharAttributes.CHARISMA,
+    CharAttributes.SEX,
+    CharAttributes.WEIGHT,
+    CharAttributes.HEIGHT,
+]; */
 
 interface Map<T> {
     [K: string]: T;
@@ -31,86 +48,87 @@ export class Genome {
     static totalAttValue: number = Math.round(Math.random() * 10) + 60;
 
     chromosomes: Chromosome[] = [];
-    //sexChromosome: Chromosome;
-
-
-
     chromosomesDict: Map<Chromosome> = {};
 
-
     constructor(public fatherChromosomes: Chromosome[] = null, public motherChromosomes: Chromosome[] = null) {
- 
 
         if (!this.fatherChromosomes) this.fatherChromosomes = this.generateParentGenome();
         if (!this.motherChromosomes) this.motherChromosomes = this.generateParentGenome();
-        
-        attributes.forEach((attribute, index) => {
 
+        genomeData.chromosomes.forEach((chromosomeData, index) => {
             let newChromosome: Chromosome;
+            let value;
+            let fatherValue = this.fatherChromosomes[index].value
+            let motherValue = this.motherChromosomes[index].value;
 
-            if (attribute == Attributes.SEX) {
-                newChromosome = new Chromosome(attribute, this.fatherChromosomes[index].value);
-                //this.sexChromosome = newChromosome;
-            } else {
-                let value;
-                let value1 = this.fatherChromosomes[index].value
-                let value2 = this.motherChromosomes[index].value;
-
-                if (value1 <= 0 && value2 <= 0) {
-                    value = 1;
-                } else if (value1 <= 0 || value2 <= 0) {
-                    value = Math.max(value1, value2) * Math.abs(Math.min(value1, value2))
-                } else {
-                    value = Math.max(value1, value2);
-                }
-
-                newChromosome = new Chromosome(attribute, value);
+            switch (chromosomeData.type) {
+                case CharAttributeTypes.SEX:
+                    value = fatherValue;
+                    break;
+                case CharAttributeTypes.MEASURES:
+                    let min = Math.min(fatherValue, motherValue);
+                    let max = Math.min(fatherValue, motherValue);
+                    value = UtilsService.randomNumber(min, max);
+                    break;
+                default:
+                    if (fatherValue <= 0 && motherValue <= 0) {
+                        value = 1;
+                    } else if (fatherValue <= 0 || motherValue <= 0) {
+                        value = Math.max(fatherValue, motherValue) * Math.abs(Math.min(fatherValue, motherValue))
+                    } else {
+                        value = Math.max(fatherValue, motherValue);
+                    }
+                    break;
             }
-            this.chromosomesDict[attribute] = newChromosome;
-           // this.chromosomes.push(newChromosome)
+
+
+            newChromosome = new Chromosome(chromosomeData.name, value, chromosomeData.type);
+            this.chromosomesDict[chromosomeData.name] = newChromosome;
+            this.chromosomes.push(newChromosome);
         })
     }
 
     get chromosomesForReproduction(): Chromosome[] {
 
-        let newSet: Chromosome[] = [];
-        attributes.forEach((att, index) => {
-            let rand: number = Math.round(Math.random());
-            newSet.push(rand ? this.fatherChromosomes[index] : this.motherChromosomes[index]);
+        let newChromosomesSet: Chromosome[] = [];
+        let selectChromosome: Chromosome;
+
+        genomeData.chromosomes.forEach((chromosomeData, index) => {
+            selectChromosome = Math.floor(Math.random()) ? this.fatherChromosomes[index] : this.motherChromosomes[index]
+            newChromosomesSet.push(selectChromosome);
         })
 
-        return newSet;
+        return newChromosomesSet;
     }
 
     generateParentGenome(): Chromosome[] {
         let chromosomes: Chromosome[] = [];
 
-        attributes.forEach((attribute, index) => {
-            if (attribute == 'sex') {
-                let value = Math.round(Math.random()) ? 'x' : 'y';
-                chromosomes.push(new Chromosome(attribute, value))
-            } else {
-                let value = UtilsService.randomNumber(0, 18);
-                if (value == 0) value = -0.5;
-                if (value == 1) value = -1.5;
-                if (value == 2) value = -2;
-                //chromosomes.push(new Chromosome(attribute, arr[index]))
-                chromosomes.push(new Chromosome(attribute, value))
+        genomeData.chromosomes.forEach((chromosomeData, index) => {
+            let value: any;
+            switch (chromosomeData.type) {
+                case CharAttributeTypes.SEX:
+                    value = Math.round(Math.random()) ? 'x' : 'y';
+                    break;
+                case CharAttributeTypes.MEASURES:
+                    value = UtilsService.randomNumber(140, 200);
+                    break;
+                default:
+                    value = UtilsService.randomNumber(0, MAX_ATTRIBUTE_VALUE);
+                    if (value == 0) value = -0.5;
+                    if (value == 1) value = -1.5;
+                    if (value == 2) value = -2;
+
+                    break;
             }
+            chromosomes.push(new Chromosome(chromosomeData.name, value))
         })
 
         return chromosomes;
     }
 
     getChromosomeByName(name: string): Chromosome {
-
-        /* let found: Chromosome = null;
-        this.chromosomes.forEach(chromosome => {
-            if (name == chromosome.type) found = chromosome;
-        });
-
-        return found; */
-
+        this.chromosomesDict[name];
         return this.chromosomesDict[name];
     }
 }

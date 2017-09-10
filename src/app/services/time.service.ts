@@ -34,7 +34,7 @@ export class TimeService {
     })
   }
 
-  setTimer() {
+  /* setTimer() {
 
     this.timer = null;
     this.timer = Observable.timer(0, this._speed)
@@ -68,7 +68,7 @@ export class TimeService {
       this._date.next(date);
     }
     );
-  }
+  } */
 
 
   nextDay(timeout = 0) {
@@ -90,7 +90,7 @@ export class TimeService {
 
       this._currentDate = date;
 
-      this.populationService.newDay();
+      this.populationService.newDay(this._currentDate);
       if (date.getDate() == 1) {
         this.populationService.newMonth();
 

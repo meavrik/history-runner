@@ -4,6 +4,7 @@ import { TimeService } from './services/time.service';
 import { SelectItem } from 'primeng/primeng';
 import { PopulationService } from './services/population.service';
 import { Component } from '@angular/core';
+import { Tribe } from './tribe/tribe';
 
 @Component({
   selector: 'app-root',
@@ -15,12 +16,14 @@ import { Component } from '@angular/core';
 export class AppComponent {
   gameStarted: boolean = false;
   tribes: SelectItem[];
-  selectedTribe;
+  selectedTribe:string;
 
   constructor(private populationService: PopulationService, private time: TimeService) {
+    
     this.populationService.tribesObservable.subscribe(tribes => {
       if (tribes) {
-        this.tribes = tribes.map(tribe => { return { label: tribe.name, value: tribe.name } })
+        this.tribes = tribes.map(tribe => { return { label: tribe.name, value: tribe.name } });
+        this.selectedTribe = this.tribes[0].value;
       }
       
     })
@@ -37,7 +40,7 @@ export class AppComponent {
       this.populationService.generateNewPerson(new Person(), new Person(), UtilsService.randomNumber(15, 35));
     } */
 
-    this.populationService.initTribes()
+    this.populationService.initTribes(this.selectedTribe)
     this.gameStarted = true;
     this.time.startHistory()
   }

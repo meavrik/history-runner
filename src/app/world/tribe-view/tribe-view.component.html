@@ -1,10 +1,66 @@
-<p-panel>
+<!-- <div style="background-color:wheat;height:50px;width:100%;padding:5px">
+        message test
+    </div>
+    <div style="display:flex;flex-flow:row wrap;justify-content:space-around">
+        <app-person-id *ngFor="let person of tribe.peoples" [person]=person></app-person-id>
+    </div> -->
+
+
+
+<p-dataGrid [value]="population" [paginator]="true" [rows]="9">
     <p-header>
         <h3 *ngIf="tribe.king">{{tribe.name}} | <small>king : {{tribe.king.fullName}}</small></h3>
         <p *ngIf="tribe.peoples">Population {{tribe.peoples.length}} ({{tribe.kids.length}} kids | <span>woman : {{((tribe.womans.length * 100)/tribe.peoples.length).toFixed()}}% , man : {{((tribe.mans.length * 100)/tribe.peoples.length).toFixed()}}% )</span></p>
-        <p>food = {{tribe.food | number}} ( needed per day  : {{tribe.foodNeeded | number}} | produce per day {{tribe.produceFoodPerDay |number}})</p>
+        <p>food = {{tribe.food | number}} ( needed per day : {{tribe.foodNeeded | number}} | produce per day {{tribe.produceFoodPerDay
+            |number}})
+        </p>
     </p-header>
-    <div style="display:flex;flex-flow:row wrap;justify-content:space-around">
-        <app-person-id *ngFor="let person of tribe.peoples" [person]=person></app-person-id>
+
+    <ng-template let-person pTemplate="item">
+        <div style="padding:1px" class="ui-g-12 ui-md-4">
+            <p-panel [style]="{'text-align':'center'}">
+                <p-header>
+                    <div style="height:40px">
+                        {{person.fullName}}
+                    </div>
+                </p-header>
+                <img [src]="person.sex=='male'?'assets/avatar-male.png':'assets/avatar-female.png'" width="60">
+                <div class="car-detail">
+                    <i style="margin:0 10px 0 10px" class="fa fa-birthday-cake" aria-hidden="true"></i>{{person.age}} 
+                    <i style="margin:0 10px 0 10px" class="fa fa-heart-o" aria-hidden="true"></i>{{person.health}}</div>
+                <hr class="ui-widget-content" style="border-top:0">
+                <div style="display:flex;justify-content:space-evenly">
+                    <i class="fa fa-id-card-o" aria-hidden="true"></i>
+                    <i class="fa fa-search" (click)="selectCar(person)" style="cursor:pointer"></i>
+                    <i class="fa fa-tasks" aria-hidden="true"></i>
+                </div>
+            </p-panel>
+        </div>
+    </ng-template>
+</p-dataGrid>
+
+
+<p-dialog header="Car Details" [(visible)]="displayDialog" [responsive]="true" showEffect="fade" [modal]="true" width="225"
+    (onAfterHide)="onDialogHide()">
+    <div class="ui-grid ui-grid-responsive ui-grid-pad" *ngIf="selectedPerson" style="font-size:16px;text-align:center;padding:10px">
+        <div class="ui-grid-row">
+            <div class="ui-grid-col-12" style="text-align:center"><img [src]="selectedPerson.sex=='male'?'assets/avatar-male.png':'assets/avatar-female.png'" width="100"></div>
+        </div>
+        <div class="ui-grid-row">
+            <div class="ui-grid-col-4">Name: </div>
+            <div class="ui-grid-col-8">{{selectedPerson.firstName}}</div>
+        </div>
+        <div class="ui-grid-row">
+            <div class="ui-grid-col-4">Birthday:</div>
+            <div class="ui-grid-col-8">{{selectedPerson.birthDate | date:short}}</div>
+        </div>
+        <div *ngIf="selectedPerson.spouse" class="ui-grid-row">
+            <div class="ui-grid-col-4">Maried to: </div>
+            <div class="ui-grid-col-8">{{selectedPerson.spouse.fullName}}</div>
+        </div>
+        <!-- <div class="ui-grid-row">
+            <div class="ui-grid-col-4">Color: </div>
+            <div class="ui-grid-col-8">{{selectedPerson.color}}</div>
+        </div> -->
     </div>
-</p-panel>
+</p-dialog>
