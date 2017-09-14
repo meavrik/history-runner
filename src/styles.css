@@ -10,3 +10,7 @@ body {
     margin:0;
     height: 100%; 
 }
+
+.ui-tabview .ui-tabview-panel{
+    padding:0px;
+}

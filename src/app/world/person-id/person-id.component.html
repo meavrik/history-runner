@@ -1,57 +1,19 @@
-<div class="card">
-    <div [ngClass]="person.spouse?'title2':'title'">
-        <span *ngIf="person.isRoyal==true"><img  src="assets/royal_sign.png" alt="R" height="42" width="42"/></span>
-        <img [src]="person.sex=='male'?'assets/avatar-male.png':'assets/avatar-female.png'" alt="face" height="42" width="42" />
-        <!-- <i [class]="person.sex=='male'?'fa fa-mars':'fa fa-venus'" aria-hidden="true"></i> -->
-        <b>{{person.fullName}} <span *ngIf="person.maidenName">({{person.maidenName}})</span></b>
-
-    </div>
-    <!-- <p><small> {{person.sex}} age {{person.age}} with {{person.health}}% health</small></p>
-    <small> birth day : {{person.birthDate | date:short}}</small>
-    <small *ngIf="person.spouse">married to {{person.spouse.fullName}} childrens {{person.childrens.length}} ({{person.fertility}})
-</small>
-
-    <div *ngIf="person.work">
-        <p-dropdown [options]="works" [(ngModel)]="person.work.type" (onChange)="onWorkChange()"></p-dropdown>
-    </div> -->
-
-    <div style="display:flex">
-        <button type="text" pButton icon="fa fa-user" (click)="opChar.toggle($event)"></button>
-        <button type="text" pButton icon="fa fa-book" (click)="op.toggle($event)"></button>
-    </div>
+<div style="padding:1px" class="ui-g-12 ui-md-4">
+    <p-panel [style]="{'text-align':'center'}">
+        <p-header>
+            <div style="height:40px">
+                <i *ngIf="person.condition" class="fa fa-exclamation" aria-hidden="true"></i> {{person.fullName}}
+            </div>
+        </p-header>
+        <img [src]="person.sex=='male'?'assets/avatar-male.png':'assets/avatar-female.png'" width="60">
+        <div class="car-detail">
+            <i style="margin:0 10px 0 10px" class="fa fa-birthday-cake" aria-hidden="true"></i>{{person.age}}
+            <i style="margin:0 10px 0 10px" class="fa fa-heart-o" aria-hidden="true"></i>{{person.health}}</div>
+        <hr class="ui-widget-content" style="border-top:0">
+        <div style="display:flex;justify-content:space-evenly">
+            <i class="fa fa-id-card-o" (click)="selectPersonInfo2(person)" style="cursor:pointer"></i>
+            <i class="fa fa-search" (click)="selectPersonInfo(person)" style="cursor:pointer"></i>
+            <i class="fa fa-tasks" style="cursor:pointer"></i>
+        </div>
+    </p-panel>
 </div>
-
-
-
-<p-overlayPanel #opChar [dismissable]="true" [showCloseIcon]="true">
-       <p>HEIGHT : {{person.height}}</p>
-       <p>WEIGHT : {{person.weight}}</p>
-</p-overlayPanel>
-
-<p-overlayPanel #op [dismissable]="true" [showCloseIcon]="true">
-    <div style="display:flex">
-
-        <div style="border:1px solid #ccc;padding:2px">
-            <u>father</u>
-            <div *ngFor="let att of person.genome.fatherChromosomes">
-
-                <p>{{att.name}} : {{att.value}}</p>
-            </div>
-        </div>
-
-        <div style="border:1px solid #ccc;padding:2px">
-            <u>mother</u>
-            <div *ngFor="let att of person.genome.motherChromosomes">
-
-                <p>{{att.name}} : {{att.value}}</p>
-            </div>
-        </div>
-
-        <div style="border:1px solid #ccc;padding:2px">
-            <u>me</u>
-            <div *ngFor="let att of person.genome.chromosomes">
-                <p>{{att.name}} : {{att.value}}</p>
-            </div>
-        </div>
-    </div>
-</p-overlayPanel>

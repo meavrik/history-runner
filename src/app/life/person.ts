@@ -8,6 +8,9 @@ import { Injectable, ReflectiveInjector } from '@angular/core';
 import { CharAttributes } from "app/life/attributes.enum";
 import { TimeService } from '../services/time.service';
 import { CharAttributeTypes } from './attributes.enum';
+import { Male } from 'app/life/person.male';
+import { Female } from './person.female';
+import { Family } from './family';
 
 interface IWork {
     type: string;
@@ -17,14 +20,15 @@ interface ILifeEvent {
     date: Date;
 }
 
-export class Person {
+export abstract class Person {
     currentDate: Date;
     alive: boolean;
     _age: number;
     _health: number;
     tribe: Tribe;
-    father: Person;
-    mother: Person;
+    family: Family;
+    father: Male;
+    mother: Female;
     _isRoyal: boolean;
 
     firstName: string = ""
@@ -33,7 +37,7 @@ export class Person {
     genome: Genome;
     work: IWork;
     spouse: Person;
-    spouseLove:number=0;
+    spouseLove: number = 0;
     childrens: Person[] = [];
     birthDate: Date;
     fertility: number = 0;
@@ -51,26 +55,29 @@ export class Person {
 
     myLifeEvents: ILifeEvent[] = [];
 
-    pregnant: number;
-    maidenName: string = "";
     optionalMatches: Person[];
     myLoveFactor: number;
+    condition: boolean;
 
-    constructor(father: Person, mother: Person) {
+    constructor(father: Male, mother: Female, genome: Genome) {
         this.father = father;
         this.mother = mother;
         this.myLoveFactor = UtilsService.randomNumber(10, 60)
 
         if (this.father) {
             this.tribe = this.father.tribe;
-            if (this.father.genome) {
+            /* if (this.father.genome) {     
                 this.genome = new Genome(this.father.genome.chromosomesForReproduction, this.mother.genome.chromosomesForReproduction);
-            }
-        } else {
-            this.genome = new Genome();
+            } else {
+                
+            } */
         }
 
-        //this.sex = this.genome.getChromosomeByName(CharAttributes.SEX).value == 'x' ? 'female' : 'male';
+        /* if (!this.genome) {
+            this.genome = new Genome();
+        } */
+
+        this.genome = genome;
     }
 
     createAsAdult(age: number) {
@@ -80,8 +87,8 @@ export class Person {
         this.generation = 1;
         if (this.age > 13) this.fertility = UtilsService.randomNumber(20, 100);
         this.health = UtilsService.randomNumber(100 - this.age, 95);
-        this.weight = this.genome.getChromosomeByName(CharAttributes.WEIGHT).value;
-        this.height = this.genome.getChromosomeByName(CharAttributes.HEIGHT).value;
+        this.weight = this.genome.max_weight;
+        this.height = this.genome.max_height;
     }
 
     born() {
@@ -90,10 +97,11 @@ export class Person {
         this.weight = UtilsService.randomNumber(3, 4);
         this.height = UtilsService.randomNumber(40, 60);
         this.fertility = 0;
+
         let birthHealth = UtilsService.randomNumber(-20, 100);
 
         this.health = birthHealth < 0 ? Math.abs(birthHealth) : 100;
-        if (this.genome.getChromosomeByName(CharAttributes.CONSTITUTION).value) {
+        if (this.genome.constitution) {
 
         }
 
@@ -101,10 +109,21 @@ export class Person {
         this.father.childrens.push(this);
         this.mother.childrens.push(this);
 
+        if (this.mother.family) {
+            this.family = this.mother.family
+            this.family.addMember(this);
+        }
+
         //this.isRoyal = (this.father.isRoyal || this.mother.isRoyal) ? true : false;
         this.addLifeEvent('Birthday')
         //console.info(this.fullName + ' IS BORN!');
-        this.announce('New BABY, by the name of ' + this.fullName + ' IS BORN!')
+        this.announce('New BABY, by the name of ' + this.fullName + ' IS BORN!');
+
+        /* this.genome.chromosomes.forEach(chromosome => {
+            if (chromosome.value == 1) {
+                this.condition = true;
+            }
+        }) */
     }
 
     setAlive() {
@@ -160,23 +179,28 @@ export class Person {
     }
 
     get myStrength(): number {
-        let chromo: Chromosome = this.genome.getChromosomeByName(CharAttributes.STRENGTH)
-        return chromo ? chromo.value : 0;
+
+        //let chromo: Chromosome = this.genome.getChromosomeByName(CharAttributes.STRENGTH);
+        let value: number = this.genome.strength
+        if (this.sex == 'male') {
+            value += 1;
+        }
+        return value;
     }
 
     get myDexterety(): number {
-        let chromo: Chromosome = this.genome.getChromosomeByName(CharAttributes.DEXTERITY)
-        return chromo ? chromo.value : 0;
+        //let chromo: Chromosome = this.genome.getChromosomeByName(CharAttributes.DEXTERITY)
+        return this.genome.dexterity;
     }
 
     get myIntelgence(): number {
-        let chromo: Chromosome = this.genome.getChromosomeByName(CharAttributes.INTELLIGENCE)
-        return chromo ? chromo.value : 0;
+        //let chromo: Chromosome = this.genome.getChromosomeByName(CharAttributes.INTELLIGENCE)
+        return this.genome.intelligent;
     }
 
     get myWisdom(): number {
-        let chromo: Chromosome = this.genome.getChromosomeByName(CharAttributes.WISDOM)
-        return chromo ? chromo.value : 0;
+        //let chromo: Chromosome = this.genome.getChromosomeByName(CharAttributes.WISDOM)
+        return this.genome.wisdom;
     }
 
     get availableForMatch(): boolean {
@@ -185,36 +209,12 @@ export class Person {
         return true;
     }
 
-    /* findMatch(): Person {
-        let found: Person;
-        if (!this.availableForMatch) return;
-
-        let otherSexPersons: Person[] = this.tribe.peoples.filter(person => {
-            return person.sex != this.sex && this.isFamilyMember(person) && !person.isChild
-        })
-
-        otherSexPersons.forEach(person => {
-            if (person.availableForMatch && this.isInloveWith(person)) {
-                found = person;
-                return;
-            }
-        });
-
-        if (found) {
-            this.addLifeEvent('Fall inlove with ' + found.fullName);
-        }
-
-        return found;
-    } */
-
-
     isInloveWith(other: Person): number {
         let inlove: boolean = false;
 
         if (!this.genome) {
             console.error('PROBLEM - no genome');
             return
-
         }
 
         let matches: number = 0;
@@ -235,18 +235,16 @@ export class Person {
             inlove = true;
         }
 
-
         return inlovePercent;
     }
 
     isFamilyMember(person): boolean {
         if (person == this.father || person == this.mother) return true;
-        // if (this.father.childrens && this.father.childrens.indexOf(person) != -1) return true;
-        //if (this.mother.childrens && this.mother.childrens.indexOf(person) != -1) return true;
+        if (this.father && this.father.childrens && this.father.childrens.indexOf(person) != -1) return true;
+        if (this.mother && this.mother.childrens && this.mother.childrens.indexOf(person) != -1) return true;
         if (this.childrens && this.childrens.indexOf(person) == -1) return true;
         return false;
     }
-
 
     announce(str) {
         if (this.tribe.mine) {
@@ -254,46 +252,9 @@ export class Person {
         }
     }
 
-
     get fullName(): string {
         return this.firstName + ' ' + this.lastName;
     }
-
-    /* getMarried(person: Person) {
-        this.spouse = person;
-        person.spouse = this;
-        this.addLifeEvent('Got married with ' + person.fullName);
-
-        if (this.sex == "male") this.spouse.lastName = this.lastName;
-        if (this.sex == "female") {
-            this.maidenName = this.lastName;
-            this.lastName = this.spouse.lastName;
-        };
-
-        console.info(this.firstName + ' and ' + person.firstName + ' GOT MARRIED');
-    } */
-
-    /* tryToBringChild() {
-        let maleFertilityTest = UtilsService.randomNumber(1, 100);
-        let femaleFertilityTest = UtilsService.randomNumber(1, 100);
-
-        if (femaleFertilityTest <= this.fertility && maleFertilityTest <= this.spouse.fertility) {
-            this.gotPregnant();
-        }
-    }
-
-    gotPregnant() {
-        this.pregnant = 1;
-        console.info(this.fullName + ' GOT pregnant at age ' + this.age);
-    }
-
-    get canHaveChildren(): boolean {
-        if (this.sex != "female") return false;
-        if (this.pregnant) return false;
-        if (this.fertility <= 0 || this.spouse.fertility <= 0) return false;
-
-        return true;
-    } */
 
     get age(): number {
         return this._age;
@@ -318,12 +279,17 @@ export class Person {
             }
         } */
 
-        if (this._age < 18) {
-            this.weight += 5;
-            this.height += 5;
+
+        if (this.weight < this.genome.max_weight) {
+            this.weight += UtilsService.randomNumber(1, 5);
         }
 
-        if (this._age > 25 || this.genome.getChromosomeByName(CharAttributes.CONSTITUTION).value < 5) {
+        if (this.height < this.genome.max_height) {
+            this.height += UtilsService.randomNumber(5, 8);
+        }
+
+
+        if (this._age > 25 || this.genome.constitution < 5) {
             this.health -= UtilsService.randomNumber(0, 5);
         }
     }
@@ -337,6 +303,7 @@ export class Person {
     }
 
     die() {
+        if (this.family) this.family.removeMember(this);
         console.warn(this.fullName + ' HAS DIED! :( at the age of ' + this.age);
         this.addLifeEvent('Died');
         this.alive = false;
@@ -355,22 +322,8 @@ export class Person {
     }
 
     get caloriesNeededPerDay(): number {
-        if (this.sex == "male") {
-            if (this.isChild) {
-                return 1500;
-            } else {
-                return 2400;
-            }
-        } else if (this.sex == "female") {
-            if (this.pregnant) {
-                return 2400;
-            }
-            if (this.isChild) {
-                return 1000;
-            } else {
-                return 1800;
-            }
-        }
+
+        return 1000;
     }
 
 

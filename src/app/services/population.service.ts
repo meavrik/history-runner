@@ -10,6 +10,7 @@ import { Person } from 'app/life/person';
 import { Male } from 'app/life/person.male';
 import { Female } from '../life/person.female';
 import { CharAttributes } from 'app/life/attributes.enum';
+import { Family } from '../life/family';
 
 const tribesDB: any[] = [
   {
@@ -103,6 +104,7 @@ export class PopulationService {
   _population: BehaviorSubject<Person[]> = <BehaviorSubject<Person[]>>new BehaviorSubject([]);
   _message: BehaviorSubject<any> = <BehaviorSubject<any>>new BehaviorSubject(null);
   peoples: Person[] = [];
+  familes: Family[] = [];
   peoplesAlive: Person[] = [];
 
   tribes: Tribe[];
@@ -122,7 +124,7 @@ export class PopulationService {
     })
 
     this._tribesBS.next(Object.assign({}, this).tribes);
-    // });
+
 
     this.population.subscribe(people => {
 
@@ -152,17 +154,28 @@ export class PopulationService {
       if (tribe.name == selectedTribe) {
         tribe.mine = true;
       }
-      //debugger
+
       for (var i = 0; i < totalFounders; i++) {
-        let founderFather: Person = new Male(null, null);
+        let founderFather: Male = new Male(null, null, new Genome());
         founderFather.tribe = tribe;
-        let founderMother: Person = new Female(null, null);
+        let founderMother: Female = new Female(null, null, new Genome());
+        //let rand = Math.round(Math.random()) ? "x" : "y";
 
+        //founderFather.genome.getChromosomeByName(CharAttributes.SEX).value = rand;
+        /* founderMother.genome.fatherChromosomes[0].value = "x";
+        founderMother.genome.motherChromosomes[0].value = "x";
+        founderMother.genome.setMyGenome();
 
-        //this.generateNewPerson(founderFather, founderMother, UtilsService.randomNumber(15, 35));
+        founderFather.genome.fatherChromosomes[0].value = "y";
+        founderFather.genome.motherChromosomes[0].value = "x";
+        founderFather.genome.setMyGenome(); */
 
-        let genome: Genome = new Genome(founderFather.genome.chromosomes, founderMother.genome.chromosomes);
-        let founder: Person = genome.getChromosomeByName(CharAttributes.SEX).value == 'y' ? new Male(founderFather, founderMother) : new Female(founderFather, founderMother);
+        let genome: Genome = new Genome(founderFather.genome.chromosomesForReproduction, founderMother.genome.chromosomesForReproduction);
+        genome.fatherChromosomes[0].value = i % 2 == 0 ? 'x' : 'y';
+        genome.motherChromosomes[0].value = 'x';
+        genome.setMyGenome();
+
+        let founder: Person = genome.sex == 'male' ? new Male(founderFather, founderMother, genome) : new Female(founderFather, founderMother, genome);
 
         this.addNewPersonToWorld(founder, false);
 
@@ -171,29 +184,11 @@ export class PopulationService {
         }
       }
     })
-
-    //this.selectedTribe = this.tribes.filter(tribe=>tribe.name == selectedTribe)[0];
   }
 
   get population(): Observable<Person[]> { return this._population.asObservable() }
   get tribesObservable(): Observable<Tribe[]> { return this._tribesBS.asObservable() }
   get message(): Observable<any> { return this._message.asObservable() }
-
-  /* generateNewPerson(parent1: Person, parent2: Person, age: number = 0): Person {
-
-    let person: Person = new Person(parent1, parent2,parent1.tribe);
-    person.born(age);
-
-    this.peoples.push(person);
-
-    if (age == 0 && !person.tribe.kids.length) {
-      this.alertNewMessage('First Born Baby to the ' + person.tribe.name + "'s", person.fullName + ' is the first born in our new tribe')
-    }
-
-    this._population.next(this.peoples);
-
-    return person;
-  } */
 
   addNewPersonToWorld(person: Person, baby: boolean = true) {
     if (baby) {
@@ -209,8 +204,6 @@ export class PopulationService {
     this.peoples.push(person);
     this._population.next(this.peoples);
   }
-
-
 
   newDay(curDate: Date) {
     this.tribes.forEach(tribe => {
@@ -230,25 +223,8 @@ export class PopulationService {
         this.kill(person);
       } else {
 
-        /* if (person.pregnant) {
-          if (person.pregnant >= 10) {
-            person.pregnant = 0;
-
-            let newChild: Person = this.generateNewPerson(person.spouse, person);
-
-            person.addLifeEvent('Gave birth to ' + newChild.firstName);
-            person.spouse.addLifeEvent('Have new Child : ' + newChild.firstName);
-
-          } else {
-            person.pregnant++;
-          }
-        } */
-
         if (!person.isChild && !person.spouse) {
           person.tribe.findMatchFor(person);
-          /* if (foundMatch) {
-            person.tribe.marrie(person, foundMatch)
-          } */
         }
 
         if (person instanceof Female) {
@@ -264,11 +240,12 @@ export class PopulationService {
               woman.unbornFetus = null;
               woman.addLifeEvent('Gave birth to ' + newBaby.firstName);
               woman.spouse.addLifeEvent('Have new Child : ' + newBaby.firstName);
+
+              
             }
           }
         }
       }
-
     })
   }
 

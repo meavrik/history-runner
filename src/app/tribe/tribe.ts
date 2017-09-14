@@ -2,12 +2,15 @@ import { House } from './buildings/house';
 import { Person } from "app/life/person";
 import { Chromosome } from '../life/chromosome';
 import { UtilsService } from '../services/utils.service';
+import { Female } from '../life/person.female';
+import { Male } from 'app/life/person.male';
+import { Family } from '../life/family';
 
 export class Tribe {
     mine: boolean;
     king: Person;
     name: string;
-    familes: string[];
+    famileNames: string[];
     names: any;
     peoples: Person[] = [];
     peoplesAlive: Person[]
@@ -29,9 +32,11 @@ export class Tribe {
     produceFoodPerDay: number;
     foodNeeded: number;
 
+    familes:Family[]=[];
+
     constructor(data: any) {
         this.name = data.tribe;
-        this.familes = UtilsService.shuffle(data.familes);
+        this.famileNames = UtilsService.shuffle(data.familes);
         this.names = data.names;
         //this.food = 500;
     }
@@ -86,7 +91,7 @@ export class Tribe {
         //return this.familes[Math.floor(Math.random() * this.familes.length)];
         {
             let fatherName: string = father.firstName ? father.firstName : this.generateFirstName(father)
-            return this.familes.length ? this.familes.pop() : 'Ben-' + fatherName;
+            return this.famileNames.length ? this.famileNames.pop() : 'Ben-' + fatherName;
 
         }
 
@@ -135,11 +140,11 @@ export class Tribe {
         let bestLoveFactor: number = 0;
         let loveFactorFound: number
 
-        if (!me.optionalMatches ) {
+        if (!me.optionalMatches) {
             me.optionalMatches = this.getPersonOptionalMatches(me);
         }
-        
-        if (me.optionalMatches.length == 0 ) {
+
+        if (me.optionalMatches.length == 0) {
             if (me.myLoveFactor > 10) {
                 me.myLoveFactor--;
             }
@@ -149,8 +154,8 @@ export class Tribe {
 
         if (me.optionalMatches.length) {
             //let removeArr: Person[] = [];
-            let index: number = Math.round(Math.random() * me.optionalMatches.length - 1);
-            let randomMatch: Person = me.optionalMatches.splice(index, 1)[0];
+            //let index: number = Math.round(Math.random() * me.optionalMatches.length - 1);
+            let randomMatch: Person = me.optionalMatches.pop();
             //me.optionalMatches.forEach(person => {
             loveFactorFound = me.isInloveWith(randomMatch);
 
@@ -165,7 +170,18 @@ export class Tribe {
                     randomMatch.spouseLove = otherLoveFactor;
 
                     this.announce(`${me.fullName} (${me.spouseLove}% love) AND ${randomMatch.fullName}(${randomMatch.spouseLove}% love) fall inlove with eachother! :)`, 1);
-                    this.marrie(me, randomMatch);
+                    let bride: Female;
+                    let groom: Male;
+
+                    if (me instanceof Female) {
+                        bride = me as Female;
+                        groom = randomMatch as Male;
+                    } else {
+                        bride = randomMatch as Female;
+                        groom = me as Male;
+                    }
+
+                    this.marrie(bride, groom);
                 } else {
                     this.announce(`${randomMatch.fullName} turned ${me.fullName} off (${otherLoveFactor}%) :(`);
 
@@ -190,7 +206,7 @@ export class Tribe {
             //});
 
             //foundMatches.forEach(found => {
-                
+
             //})
 
             /* removeArr.forEach(item => {
@@ -204,29 +220,30 @@ export class Tribe {
         }
     }
 
-    getPersonOptionalMatches(me:Person):Person[] {
-        let matches:Person[] = this.peoples.filter(person => {
+    getPersonOptionalMatches(me: Person): Person[] {
+        let matches: Person[] = this.peoples.filter(person => {
             return person.availableForMatch && person.sex != me.sex && me.isFamilyMember(person) && !person.isChild
-        });
+        })
+
+        matches = UtilsService.shuffle(matches);
         return matches;
     }
 
-    marrie(person1: Person, person2: Person) {
-        person1.spouse = person2;
-        person2.spouse = person1;
-        person1.addLifeEvent('Got married with ' + person2.fullName);
-        person2.addLifeEvent('Got married with ' + person1.fullName);
+    marrie(female: Female, male: Male) {
+        let newFamily:Family = new Family();
+        this.familes.push(newFamily);
+        
+        newFamily.addMember(male);
+        newFamily.addMember(female);
+        female.spouse = male;
+        male.spouse = female;
+        female.addLifeEvent('Got married with ' + male.fullName);
+        male.addLifeEvent('Got married with ' + female.fullName);
 
-        if (person1.sex == "male") {
-            person2.maidenName = person2.lastName;
-            person2.lastName = person1.lastName;
-        }
-        if (person2.sex == "male") {
-            person1.maidenName = person1.lastName;
-            person1.lastName = person2.lastName;
-        }
+        female.maidenName = male.lastName;
+        female.lastName = male.lastName;
 
-        this.announce(person1.firstName + ' and ' + person2.firstName + ' GOT MARRIED');
+        this.announce(female.firstName + ' and ' + male.firstName + ' GOT MARRIED');
     }
 
 

@@ -6,7 +6,7 @@ import { WorldComponent } from './world/world.component';
 import { HudComponent } from './hud/hud.component';
 import { TimeService } from './services/time.service';
 import { PopulationService } from './services/population.service';
-import { OrganizationChartModule, SelectButtonModule, ListboxModule, DropdownModule, PanelModule, DialogModule, OverlayPanelModule, ToolbarModule } from 'primeng/primeng';
+import { OrganizationChartModule, SelectButtonModule, ListboxModule, DropdownModule, PanelModule, DialogModule, OverlayPanelModule, ToolbarModule, TabViewModule, SplitButtonModule } from 'primeng/primeng';
 
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ButtonModule } from "primeng/components/button/button";
@@ -15,6 +15,7 @@ import { PersonIdComponent } from './world/person-id/person-id.component'
 import { HttpModule } from '@angular/http';
 import { TribeViewComponent } from './world/tribe-view/tribe-view.component';
 import { DataGridModule } from "primeng/components/datagrid/datagrid";
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -38,7 +39,9 @@ import { DataGridModule } from "primeng/components/datagrid/datagrid";
     HttpModule,
     DataGridModule,
     ToolbarModule,
-    OverlayPanelModule
+    OverlayPanelModule,
+    TabViewModule,
+    SplitButtonModule
   ],
   providers: [TimeService, PopulationService],
   bootstrap: [AppComponent]

@@ -21,13 +21,19 @@ export const CharAttributeTypes = {
 }
 
 export const CharAttributes = {
+    SEX: 'sex',
+
     STRENGTH: 'str',
     DEXTERITY: 'dex',
     CONSTITUTION: 'con',
     INTELLIGENCE: 'int',
     WISDOM: 'wis',
     CHARISMA: 'cha',
-    SEX: 'sex',
-    WEIGHT: 'wei',
+    CHARM: 'chr',
+    LOYALTY: 'loy',
+    EMPATHY:'emp',
+
     HEIGHT: 'hei',
+    WEIGHT: 'wei',
+    
 }
