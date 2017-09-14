@@ -1,3 +1,4 @@
+import { BehaviorSubject } from 'rxjs/Rx';
 import { House } from './../tribe/buildings/house';
 import { Chromosome } from 'app/life/chromosome';
 import { Genome } from './genome';
@@ -11,6 +12,7 @@ import { CharAttributeTypes } from './attributes.enum';
 import { Male } from 'app/life/person.male';
 import { Female } from './person.female';
 import { Family } from './family';
+import { Observable } from "rxjs/Observable";
 
 interface IWork {
     type: string;
@@ -59,6 +61,11 @@ export abstract class Person {
     myLoveFactor: number;
     condition: boolean;
 
+
+
+    _kids: BehaviorSubject<Person[]> = <BehaviorSubject<Person[]>>new BehaviorSubject([]);
+    get kids(): Observable<Person[]> { return this._kids.asObservable() }
+
     constructor(father: Male, mother: Female, genome: Genome) {
         this.father = father;
         this.mother = mother;
@@ -106,8 +113,8 @@ export abstract class Person {
         }
 
         this.generation = Math.min(this.father.generation, this.mother.generation);
-        this.father.childrens.push(this);
-        this.mother.childrens.push(this);
+        //this.father.childrens.push(this);
+        //this.mother.childrens.push(this);
 
         if (this.mother.family) {
             this.family = this.mother.family
@@ -334,5 +341,11 @@ export abstract class Person {
         if (!this.spouse) needsArr.push('love')
 
         return needsArr
+    }
+
+
+    haveNewChild(person:Person) {
+        this.childrens.push(person);
+        this._kids.next(this.childrens);
     }
 }

@@ -1,3 +1,4 @@
+import { TimeService } from './../../services/time.service';
 import { Component, OnInit, Input } from '@angular/core';
 import { Tribe } from '../../tribe/tribe';
 import { PopulationService } from '../../services/population.service';
@@ -16,11 +17,11 @@ export class TribeViewComponent implements OnInit {
   selectedPerson: Person;
   displayDialog: boolean;
   displayDialog2: boolean;
+  displayDialog3: boolean;
 
-  showPerson: Person;
+  //selectedKid: Person;
 
-
-  constructor(private populationService: PopulationService) {
+  constructor(private populationService: PopulationService,private time:TimeService) {
     this.populationService.population.subscribe(population => {
       this.population = population.filter(person => person.tribe == this.tribe);
     })
@@ -29,7 +30,7 @@ export class TribeViewComponent implements OnInit {
   ngOnInit() {
   }
 
-  selectPersonInfo(person: Person) {
+  /* selectPersonInfo(person: Person) {
     this.selectedPerson = person;
     this.displayDialog = true;
   }
@@ -38,28 +39,30 @@ export class TribeViewComponent implements OnInit {
   selectPersonInfo2(person: Person) {
     this.selectedPerson = person;
     this.displayDialog2 = true;
-  }
+  } */
 
   onDialogHide() {
+    this.time.pause=false;
     this.selectedPerson = null;
   }
 
-  kidsData: MenuItem[] = [];
+  personInfoSelected(event: any) {
 
-  getDPFor(person:Person): MenuItem[] {
-    let arr = person.childrens.map(a => {
-      return {
-        label: a.firstName, value: a.firstName, command: () => {
-          this.showPerson = a;
-        }
-      }
-    })
+    this.selectedPerson = event.person;
+    if (event.info == 'id') {
+      this.displayDialog = true;
+    }
 
-    return arr
+    if (event.info == 'genome') {
+      this.displayDialog2 = true;
+    }
+
+    if (event.info == 'kid') {
+      this.displayDialog3 = true;
+    }
+
+    this.time.pause=true;
   }
 
 
-  selectKid(person:Person) {
-    debugger;
-  }
 }

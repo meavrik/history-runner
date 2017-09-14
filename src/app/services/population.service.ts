@@ -238,6 +238,10 @@ export class PopulationService {
               let newBaby: Person = Object.assign({}, woman).unbornFetus;
               this.addNewPersonToWorld(newBaby);
               woman.unbornFetus = null;
+              
+              woman.haveNewChild(newBaby);
+              woman.spouse.haveNewChild(newBaby);
+
               woman.addLifeEvent('Gave birth to ' + newBaby.firstName);
               woman.spouse.addLifeEvent('Have new Child : ' + newBaby.firstName);
 

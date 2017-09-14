@@ -15,6 +15,7 @@ import { PersonIdComponent } from './world/person-id/person-id.component'
 import { HttpModule } from '@angular/http';
 import { TribeViewComponent } from './world/tribe-view/tribe-view.component';
 import { DataGridModule } from "primeng/components/datagrid/datagrid";
+import { PersonViewComponent } from './world/tribe-view/person-view/person-view.component';
 
 @NgModule({
   declarations: [
@@ -23,6 +24,7 @@ import { DataGridModule } from "primeng/components/datagrid/datagrid";
     HudComponent,
     PersonIdComponent,
     TribeViewComponent,
+    PersonViewComponent,
     
   ],
   imports: [
