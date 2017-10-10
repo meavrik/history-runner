@@ -11,6 +11,10 @@ body {
     height: 100%; 
 }
 
-.ui-tabview .ui-tabview-panel{
-    padding:0px;
+
+
+
+
+.ui-tabview-panel.ui-widget-content {
+    padding: 0;
 }

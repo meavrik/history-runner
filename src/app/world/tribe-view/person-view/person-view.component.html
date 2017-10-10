@@ -1,4 +1,6 @@
 <div style="text-align:center">
+
+        
     <img [src]="person.sex=='male'?'assets/avatar-male.png':'assets/avatar-female.png'" width="60">
     <div class="car-detail">
         <i style="margin:0 10px 0 10px" class="fa fa-birthday-cake" aria-hidden="true"></i>{{person.age}}
@@ -7,17 +9,20 @@
     <div style="display:flex;justify-content:space-evenly">
         <i class="fa fa-id-card-o" (click)="showGenomeInfo()" style="cursor:pointer"></i>
         <i class="fa fa-search" (click)="showId()" style="cursor:pointer"></i>
-        <i class="fa fa-tasks" style="cursor:pointer"></i>
-
+        <i class="fa fa-tasks" (click)="showHistory()" style="cursor:pointer"></i>
+        <span style="border-left:1px solid gray;padding:0 2px 0 5px;">
+            <i  class="fa fa-trash-o" (click)="killMe()" style="cursor:pointer"></i>
+        </span>
     </div>
 
 
     <hr class="ui-widget-content" style="border-top:0">
     <div style="display:flex;justify-content:space-evenly">
-        <button *ngIf="person.mother.firstName" pButton class="info-butn" type="button" (click)="showMom()" label="mom"></button>
-        <button *ngIf="person.father.firstName" pButton class="info-butn" type="button" (click)="showDad()" label="dad"></button>
+        <!-- <button *ngIf="person.mother.firstName" pButton class="info-butn" type="button" (click)="showMom()" label="mom"></button> -->
+        <!-- <button *ngIf="person.father.firstName" pButton class="info-butn" type="button" (click)="showDad()" label="dad"></button> -->
+        <button *ngIf="person.mother.firstName" pButton class="info-butn" type="button" (click)="showParents()" label="parents"></button>
         <button *ngIf="person.spouse" pButton class="info-butn" type="button" (click)="showSpouse()" [label]="person.sex=='male'?'wife':'husband'"></button>
-        <button *ngIf="person.childrens && person.childrens.length" pButton class="info-butn ui-button-success" type="button" (click)="onclick()" label="Kids"></button>
+        <button *ngIf="person.childrens && person.childrens.length" pButton class="info-butn ui-button-success" type="button" (click)="showKids()" [label]="person.childrens.length+'kids'"></button>
 
         <!-- <div *ngIf="person.childrens && person.childrens.length">
             

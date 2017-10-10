@@ -5,15 +5,20 @@ import { UtilsService } from '../services/utils.service';
 import { Female } from '../life/person.female';
 import { Male } from 'app/life/person.male';
 import { Family } from '../life/family';
+import { BehaviorSubject } from 'rxjs';
+import { Observable } from 'rxjs/Rx';
 
 export class Tribe {
+    currentMessage:string;
+    _message: BehaviorSubject<string> = <BehaviorSubject<string>>new BehaviorSubject('');
     mine: boolean;
     king: Person;
     name: string;
     famileNames: string[];
     names: any;
     peoples: Person[] = [];
-    peoplesAlive: Person[]
+    peoplesAlive: Person[];
+    peoplesNeedsMatch: Person[];
     womans: Person[] = []
     mans: Person[] = []
     kids: Person[] = []
@@ -32,7 +37,7 @@ export class Tribe {
     produceFoodPerDay: number;
     foodNeeded: number;
 
-    familes:Family[]=[];
+    familes: Family[] = [];
 
     constructor(data: any) {
         this.name = data.tribe;
@@ -40,6 +45,9 @@ export class Tribe {
         this.names = data.names;
         //this.food = 500;
     }
+
+    get message$(): Observable<string> { return this._message.asObservable() }
+    
 
     selectAKing() {
 
@@ -97,41 +105,8 @@ export class Tribe {
 
     }
 
-    newDay(curDate: Date) {
-        this.peoplesAlive = this.peoples.filter(person => person.alive);
-        this.produceFoodPerDay = 0;
-        this.foodNeeded = 0;
-        this.food = 0
-        this.peoplesAlive.forEach(person => {
-            this.food += person.produceFoodPerDay;
-        });
 
-        let foodForEach = Math.floor(this.food / this.peoplesAlive.length);
-
-        this.peoplesAlive.forEach(person => {
-            person.currentDate = curDate;
-            if (!person.isChild && !person.work) this.assignForWork(person)
-            this.produceFoodPerDay += person.produceFoodPerDay;
-            this.foodNeeded += person.caloriesNeededPerDay
-
-            this.food -= Math.min(foodForEach, person.caloriesNeededPerDay);
-            /* if (this.food <= 0) {
-                this.food = 0;
-            } */
-
-            if (foodForEach < person.caloriesNeededPerDay) {
-                //console.info(person.fullName + "don't hanve enough food!!!")
-            }
-        });
-
-        //this.food += this.produceFoodPerDay;
-    }
-
-    newMonth() {
-
-    }
-
-    findMatchFor(me: Person) {
+    findMatchFor(me: Person): boolean {
         if (!me.availableForMatch) return;
 
         let theOne: Person;
@@ -140,9 +115,9 @@ export class Tribe {
         let bestLoveFactor: number = 0;
         let loveFactorFound: number
 
-        if (!me.optionalMatches) {
+        //if (!me.optionalMatches) {
             me.optionalMatches = this.getPersonOptionalMatches(me);
-        }
+        //}
 
         if (me.optionalMatches.length == 0) {
             if (me.myLoveFactor > 10) {
@@ -153,10 +128,8 @@ export class Tribe {
         }
 
         if (me.optionalMatches.length) {
-            //let removeArr: Person[] = [];
-            //let index: number = Math.round(Math.random() * me.optionalMatches.length - 1);
+
             let randomMatch: Person = me.optionalMatches.pop();
-            //me.optionalMatches.forEach(person => {
             loveFactorFound = me.isInloveWith(randomMatch);
 
             if (loveFactorFound >= me.myLoveFactor) {
@@ -182,42 +155,21 @@ export class Tribe {
                     }
 
                     this.marrie(bride, groom);
+                    return true;
                 } else {
                     this.announce(`${randomMatch.fullName} turned ${me.fullName} off (${otherLoveFactor}%) :(`);
-
+                    me.addLifeEvent(`${randomMatch.fullName} turned me off :(`)
                     if (otherLoveFactor < 10) {
-                        //me.optionalMatches.splice(me.optionalMatches.indexOf(found), 1);
-                        if (randomMatch.optionalMatches && randomMatch.optionalMatches.length) randomMatch.optionalMatches.splice(randomMatch.optionalMatches.indexOf(me), 1);
-                        //removeArr.push(found);
+                        if (randomMatch.optionalMatches && randomMatch.optionalMatches.length) {
+                            randomMatch.optionalMatches.splice(randomMatch.optionalMatches.indexOf(me), 1);
+                        }
                     }
                 }
-
-
-
-
-
-
-                //foundMatches.push(randomMatch);
-            } else if (loveFactorFound < 10) {
-                //me.optionalMatches.splice(me.optionalMatches.indexOf(person), 1);
-
-                //removeArr.push(randomMatch);
             }
-            //});
 
-            //foundMatches.forEach(found => {
-
-            //})
-
-            /* removeArr.forEach(item => {
-                me.optionalMatches.splice(me.optionalMatches.indexOf(item), 1);
-            }) */
-
-            /* if (me.myLoveFactor > 10) {
-                me.myLoveFactor--;
-            } */
-            //return found;
         }
+
+        return false;
     }
 
     getPersonOptionalMatches(me: Person): Person[] {
@@ -230,9 +182,9 @@ export class Tribe {
     }
 
     marrie(female: Female, male: Male) {
-        let newFamily:Family = new Family();
-        this.familes.push(newFamily);
-        
+        let newFamily: Family = new Family();
+        this.familes = [...this.familes, newFamily];
+
         newFamily.addMember(male);
         newFamily.addMember(female);
         female.spouse = male;
@@ -240,7 +192,7 @@ export class Tribe {
         female.addLifeEvent('Got married with ' + male.fullName);
         male.addLifeEvent('Got married with ' + female.fullName);
 
-        female.maidenName = male.lastName;
+        female.maidenName = female.lastName;
         female.lastName = male.lastName;
 
         this.announce(female.firstName + ' and ' + male.firstName + ' GOT MARRIED');
@@ -248,6 +200,8 @@ export class Tribe {
 
 
     announce(str, status: number = 0) {
+        this._message.next(str);
+        
         if (this.mine) {
             switch (status) {
                 case 1:

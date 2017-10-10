@@ -1,6 +1,7 @@
 import { MenuItem } from 'primeng/primeng';
 import { Person } from 'app/life/person';
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import { PopulationService } from '../../../services/population.service';
 
 
 @Component({
@@ -14,14 +15,14 @@ export class PersonViewComponent implements OnInit {
   @Output() showInfo: EventEmitter<any> = new EventEmitter<any>();
 
   selected: Person;
-  kidsData: MenuItem[] = [];
+  //kidsData: MenuItem[] = [];
 
-  constructor() {
+  constructor(private populationService:PopulationService) {
 
   }
 
   ngOnInit() {
-    this.person.kids.subscribe(kids => {
+    /* this.person.kids.subscribe(kids => {
       if (kids) {
         this.kidsData = this.person.childrens.map(a => {
           return {
@@ -30,12 +31,9 @@ export class PersonViewComponent implements OnInit {
         })
       }
 
-    })
+    }) */
   }
 
-  selectKid() {
-    this.showInfo.emit({ person: this.selected, info: 'kid' });
-  }
 
   showGenomeInfo() {
     this.showInfo.emit({ person: this.person, info: 'genome' });
@@ -45,17 +43,22 @@ export class PersonViewComponent implements OnInit {
     this.showInfo.emit({ person: this.person, info: 'id' });
   }
 
-
-
-  showMom(){
-    this.showInfo.emit({ person: this.person.mother, info: 'kid' });
-  }
-
-
   showSpouse(){
-    this.showInfo.emit({ person: this.person.spouse, info: 'kid' });
+    this.showInfo.emit({ persons: [this.person.spouse], info: 'person' });
   }
-  showDad(){
-    this.showInfo.emit({ person: this.person.father, info: 'kid' });
+  showParents(){
+    this.showInfo.emit({ persons: [this.person.mother,this.person.father], info: 'person' });
+  }
+
+  showKids() {
+    this.showInfo.emit({ persons: this.person.childrens, info: 'person-kids' });
+  }
+
+  showHistory() {
+    this.showInfo.emit({ person: this.person, info: 'history' });
+  }
+
+  killMe() {
+    this.populationService.kill(this.person);
   }
 }

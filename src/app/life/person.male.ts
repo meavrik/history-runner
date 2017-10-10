@@ -2,10 +2,11 @@ import { Person } from 'app/life/person';
 import { Tribe } from '../tribe/tribe';
 import { Female } from './person.female';
 import { Genome } from './genome';
+import { UtilsService } from '../services/utils.service';
 
 export class Male extends Person {
     constructor(father: Male, mother: Female, genome: Genome) {
-        super(father,mother,genome);
+        super(father, mother, genome);
         this.sex = 'male';
     }
 
@@ -16,5 +17,9 @@ export class Male extends Person {
         } else {
             return 2400;
         }
+    }
+
+    get readyForSex(): boolean {
+        return true;
     }
 }

@@ -7,9 +7,43 @@
     </p-dialog>
 </div>
 
+<div style="overflow:hidden;width:100%;height: 150px;position:absolute">
+    <div *ngFor="let item of tilesRows; let row = index;">
 
+        <div class="tiles row1">
+            <span *ngFor="let col of tilesCols;">
+                <app-tile [row]="row" [col]="col"></app-tile>
+            </span>
+        </div>
+        <div class="tiles row2">
+            <span *ngFor="let col of tilesCols;">
+                <app-tile [row]="row" [col]="col"></app-tile>
+            </span>
+        </div>
 
+    </div>
+</div>
+<!-- <div style="box-sizing: border-box" class="tiles row2">
+    <app-tile></app-tile>
+    <app-tile></app-tile>
+    <app-tile></app-tile>
+</div>
+<div style="box-sizing: border-box" class="tiles row1">
+    <app-tile></app-tile>
+    <app-tile></app-tile>
+    <app-tile></app-tile>
+</div>
 
+<div style="box-sizing: border-box" class="tiles row2">
+    <app-tile></app-tile>
+    <app-tile></app-tile>
+    <app-tile></app-tile>
+</div>
+<div style="box-sizing: border-box" class="tiles row1">
+    <app-tile></app-tile>
+    <app-tile></app-tile>
+    <app-tile></app-tile>
+</div> -->
 
 <div style="padding:10px;height:100%;background-color:deepskyblue">
 

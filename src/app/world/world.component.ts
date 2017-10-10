@@ -14,46 +14,39 @@ import { TreeNode } from "primeng/components/common/treenode";
 })
 export class WorldComponent implements OnInit {
   population: Person[] = [];
-  //currentPerson: Person;
-  data: TreeNode[];
   message: any;
 
+  tilesRows: any;
+  tilesCols: any;
+
   constructor(public popuplationService: PopulationService, private time: TimeService) {
-
-  }
-
-  ngOnInit() {
-
-    this.data = [{
-      label: 'Root',
-      children: [],
-      expanded: true
-    }];
-
     this.popuplationService.message.subscribe(message => {
       this.message = message
     })
 
     this.popuplationService.population.subscribe(population => {
       this.population = population;
-      //console.log('pop change!!! '+this.population.length);
-
-      //this.currentPerson = population[population.length - 1];
-      //this.currentPerson.genome.chromosomes
-
-      /*  this.data = this.population.map(person => {
-         return { label: person.fullName, children: person.childrens?person.childrens.map(a => { return { label: a.fullName, children: [] } }):[], expanded: true }
-       }) */
-
-      /* this.data[0].children = this.population.map(person => {
-        return { label: person.fullName, children: this.getChildrens(person), expanded: false }
-      }) */
     })
+
+
+    this.tilesRows = [];
+    this.tilesCols = [];
+
+    for (var j = 0; j < 10; j++) {
+      this.tilesRows.push(j)
+    }
+
+    for (var i = 0; i < 30; i++) {
+      this.tilesCols.push(i)
+
+    }
+
+
   }
 
-  /* getChildrens(person: Person): TreeNode[] {
-    return person.childrens.map(person => { return { label: person.fullName, expanded: false, children: this.getChildrens(person) } })
-  } */
+  ngOnInit() {
+
+  }
 
   onHide() {
     this.time.pause = false;

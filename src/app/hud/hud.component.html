@@ -1,15 +1,13 @@
-
-
 <p-toolbar>
-    <div class="ui-toolbar-group-left" style="display:flex;justify-content:space-around;width:50%;;align-items:center">
-        <p-selectButton [options]="speedOptions" [(ngModel)]="selectedSpeed" (onChange)="onSpeedChange()"></p-selectButton>
-        <button pButton type="button" label="Construct" (click)="onPause()"></button>
-        <p-dropdown [options]="constructions" [style]="{'width':'300px'}" [(ngModel)]="selectedConstruct" placeholder="Select a constructions"></p-dropdown>
-    </div>
 
-    <div class="ui-toolbar-group-right" style="display:flex;justify-content:space-around;width:50%;;align-items:center">
-        
-        <p *ngIf="population">Population : {{population.length | number}}</p>
-        <h4>{{date | date:'longDate'}}</h4>
+    <div style="display:flex;justify-content:space-between;align-items:center;padding:5px">
+        <div>
+            <p>{{date | date:'longDate'}}</p>
+            <p-selectButton [options]="speedOptions" [(ngModel)]="selectedSpeed" (onChange)="onSpeedChange()">
+            </p-selectButton>
+        </div>
+
+        <p>World's Population : {{population?population.length:0 | number}}</p>
+
     </div>
 </p-toolbar>

@@ -3,7 +3,7 @@ import { Person } from "app/life/person";
 
 export class Family {
     head: Person;
-    members: Person[]=[];
+    members: Person[] = [];
 
     constructor() {
         this.members = [];
@@ -13,7 +13,7 @@ export class Family {
         if (!this.members.length) {
             this.head = member;
         }
-        this.members.push(member);
+        this.members = [...this.members, member];
     }
 
     removeMember(member: Person) {
@@ -21,6 +21,7 @@ export class Family {
             this.head = this.members[1];
         }
         this.members.splice(this.members.indexOf(member), 1);
+        this.members = [...this.members];
     }
 
     get name(): string {

@@ -19,10 +19,11 @@ interface IWork {
 }
 interface ILifeEvent {
     event: string;
-    date: Date;
+    date: string;
 }
 
 export abstract class Person {
+    underMyInfluence: Person[] = [];
     currentDate: Date;
     alive: boolean;
     _age: number;
@@ -61,7 +62,7 @@ export abstract class Person {
     myLoveFactor: number;
     condition: boolean;
 
-
+    myActionDay: Date;
 
     _kids: BehaviorSubject<Person[]> = <BehaviorSubject<Person[]>>new BehaviorSubject([]);
     get kids(): Observable<Person[]> { return this._kids.asObservable() }
@@ -73,16 +74,7 @@ export abstract class Person {
 
         if (this.father) {
             this.tribe = this.father.tribe;
-            /* if (this.father.genome) {     
-                this.genome = new Genome(this.father.genome.chromosomesForReproduction, this.mother.genome.chromosomesForReproduction);
-            } else {
-                
-            } */
         }
-
-        /* if (!this.genome) {
-            this.genome = new Genome();
-        } */
 
         this.genome = genome;
     }
@@ -142,7 +134,7 @@ export abstract class Person {
 
 
     addLifeEvent(name: string) {
-        this.myLifeEvents.push({ event: name, date: this.currentDate });
+        this.myLifeEvents.push({ event: name, date: this.currentDate ? this.currentDate.toDateString() : '' });
     }
 
     set isRoyal(value: boolean) {
@@ -256,6 +248,7 @@ export abstract class Person {
     announce(str) {
         if (this.tribe.mine) {
             console.info(str);
+            this.tribe.currentMessage = str;
         }
     }
 
@@ -271,21 +264,17 @@ export abstract class Person {
         this._age = value;
         if (!this.alive) return;
 
-        if (this._age > 12 && this._age <= 30 && this.fertility < 100) {
-            this.fertility += UtilsService.randomNumber(1, 10);
-            if (this.fertility > 100) this.fertility = 0;
-        } else if (this.fertility > 0) {
+        if (this._age > 30) {
             this.fertility -= UtilsService.randomNumber(1, 10);
             if (this.fertility < 0) this.fertility = 0;
-        }
+        } else if (this._age > 12) {
 
-        /* if (this._age > 13) {
-            let foundMatch: Person = this.findMatch();
-            if (foundMatch) {
-                this.getMarried(foundMatch);
+            if (this._age <= 30 && this.fertility < 100) {
+                this.fertility += UtilsService.randomNumber(1, 10);
             }
-        } */
 
+            if (this.fertility > 100) this.fertility = 100;
+        }
 
         if (this.weight < this.genome.max_weight) {
             this.weight += UtilsService.randomNumber(1, 5);
@@ -310,9 +299,11 @@ export abstract class Person {
     }
 
     die() {
+        if (this.spouse) this.spouse.spouse = null;
         if (this.family) this.family.removeMember(this);
         console.warn(this.fullName + ' HAS DIED! :( at the age of ' + this.age);
         this.addLifeEvent('Died');
+        this.health = 0;
         this.alive = false;
     }
 
@@ -343,8 +334,7 @@ export abstract class Person {
         return needsArr
     }
 
-
-    haveNewChild(person:Person) {
+    haveNewChild(person: Person) {
         this.childrens.push(person);
         this._kids.next(this.childrens);
     }

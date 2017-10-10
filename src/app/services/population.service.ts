@@ -106,6 +106,7 @@ export class PopulationService {
   peoples: Person[] = [];
   familes: Family[] = [];
   peoplesAlive: Person[] = [];
+  peoplesWithActionToday: Person[] = [];
 
   tribes: Tribe[];
   dataStore: any = {
@@ -144,14 +145,13 @@ export class PopulationService {
           }
         })
       }
-
     })
   }
 
   initTribes(selectedTribe: string) {
     this.tribes.forEach(tribe => {
       const totalFounders: number = 12;
-      if (tribe.name == selectedTribe) {
+      if (selectedTribe && tribe.name == selectedTribe) {
         tribe.mine = true;
       }
 
@@ -159,16 +159,6 @@ export class PopulationService {
         let founderFather: Male = new Male(null, null, new Genome());
         founderFather.tribe = tribe;
         let founderMother: Female = new Female(null, null, new Genome());
-        //let rand = Math.round(Math.random()) ? "x" : "y";
-
-        //founderFather.genome.getChromosomeByName(CharAttributes.SEX).value = rand;
-        /* founderMother.genome.fatherChromosomes[0].value = "x";
-        founderMother.genome.motherChromosomes[0].value = "x";
-        founderMother.genome.setMyGenome();
-
-        founderFather.genome.fatherChromosomes[0].value = "y";
-        founderFather.genome.motherChromosomes[0].value = "x";
-        founderFather.genome.setMyGenome(); */
 
         let genome: Genome = new Genome(founderFather.genome.chromosomesForReproduction, founderMother.genome.chromosomesForReproduction);
         genome.fatherChromosomes[0].value = i % 2 == 0 ? 'x' : 'y';
@@ -203,58 +193,6 @@ export class PopulationService {
 
     this.peoples.push(person);
     this._population.next(this.peoples);
-  }
-
-  newDay(curDate: Date) {
-    this.tribes.forEach(tribe => {
-      tribe.newDay(curDate)
-    })
-  }
-
-  newMonth() {
-    this.tribes.forEach(tribe => {
-      tribe.newMonth()
-    })
-
-    this.peoplesAlive = this.peoples.filter(person => person.alive);
-    this.peoplesAlive.forEach(person => {
-
-      if (person.health <= 0) {
-        this.kill(person);
-      } else {
-
-        if (!person.isChild && !person.spouse) {
-          person.tribe.findMatchFor(person);
-        }
-
-        if (person instanceof Female) {
-          let woman: Female = person as Female;
-          let gotPregnant: boolean = woman.gotPregnant();
-
-          if (!gotPregnant && woman.unbornFetus) {
-            if (woman.unbornFetus.age < 0) {
-              woman.unbornFetus.age++;
-            } else {
-              let newBaby: Person = Object.assign({}, woman).unbornFetus;
-              this.addNewPersonToWorld(newBaby);
-              woman.unbornFetus = null;
-              
-              woman.haveNewChild(newBaby);
-              woman.spouse.haveNewChild(newBaby);
-
-              woman.addLifeEvent('Gave birth to ' + newBaby.firstName);
-              woman.spouse.addLifeEvent('Have new Child : ' + newBaby.firstName);
-
-              
-            }
-          }
-        }
-      }
-    })
-  }
-
-  newYear() {
-    this.peoplesAlive.forEach(person => { person.age++ });
   }
 
   kill(person: Person) {

@@ -90,14 +90,17 @@ export class TimeService {
 
       this._currentDate = date;
 
-      this.populationService.newDay(this._currentDate);
-      if (date.getDate() == 1) {
-        this.populationService.newMonth();
+      
 
-        if (date.getMonth() == 0) {
-          this.populationService.newYear();
-        }
+      /* if (date.getMonth() == 0) {
+        this.populationService.newYear();
       }
+
+      if (date.getDate() == 1) {
+        this.populationService.newMonth(this._currentDate);
+      }
+
+      this.populationService.newDay(this._currentDate); */
 
       this._date.next(date);
 

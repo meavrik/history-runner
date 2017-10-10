@@ -7,28 +7,31 @@
 
 <p-panel>
     <p-header>
-        <span style="display:flex;justify-content:space-between"> <h3 >The {{tribe.name}}'s </h3><p *ngIf="tribe.king" style="padding:4px 0 0 20px">king : {{tribe.king.fullName}}</p>
-           <p style="padding:4px 0 0 0px" *ngIf="tribe.peoples && tribe.peoples.length">
+        <span style="display:flex;justify-content:space-between"> <h3 style="margin:2px" >The {{tribe.name}}'s </h3><p *ngIf="tribe.king" style="margin:2px;padding:4px 0 0 20px">king : {{tribe.king.fullName}}</p>
+           <!-- <p style="padding:4px 0 0 0px" *ngIf="tribe.peoples && tribe.peoples.length">
             Population {{tribe.peoples.length | number}}
             
-            </p>
+            </p> -->
     </span>
 
         <!-- <p>food = {{tribe.food | number}} ( needed per day : {{tribe.foodNeeded | number}} | produce per day {{tribe.produceFoodPerDay
             |number}})
         </p> -->
     </p-header>
+    <textarea #messageWindow cols="60" rows="2">{{currentMessage}}</textarea>
     <p-tabView>
-        <p-tabPanel header="People">
+        <p-tabPanel [header]="'People ('+population.length+')'">
             <p-dataGrid [value]="population" [paginator]="true" [rows]="9">
                 <p-header><small><span>{{tribe.womans.length}} woman | {{tribe.mans.length}} man | {{tribe.kids.length}} kids</span></small>
                 </p-header>
                 <ng-template let-person pTemplate="item">
-                    <div style="padding:1px" class="ui-g-12 ui-md-4">
+                    <div style="padding:0px" class="ui-g-12 ui-md-4">
                         <p-panel [style]="{'text-align':'center'}">
+
                             <p-header>
                                 <div style="height:40px">
                                     <i *ngIf="person.condition" class="fa fa-exclamation" aria-hidden="true"></i> {{person.fullName}}
+
                                 </div>
                             </p-header>
 
@@ -40,7 +43,7 @@
             </p-dataGrid>
         </p-tabPanel>
 
-        <p-tabPanel header="familes">
+        <p-tabPanel [header]="'familes (' +tribe.familes.length+')'">
             <p-dataGrid [value]="tribe.familes" [paginator]="true" [rows]="9">
                 <p-header>
                     <span>{{tribe.familes.length}} familes</span>
@@ -53,6 +56,8 @@
                                     {{family.name}}
                                 </div>
                             </p-header>
+
+                            <p>Members : {{family.members.length}}</p>
                         </p-panel>
                     </div>
                 </ng-template>
@@ -86,35 +91,37 @@
 
 
 <div *ngIf="selectedPerson">
-    <p-dialog [header]="selectedPerson.fullName" [(visible)]="displayDialog" [responsive]="true" showEffect="fade" [modal]="true" width="auto" (onAfterHide)="onDialogHide()">
+    <p-dialog [header]="selectedPerson.fullName" [(visible)]="displayDialog" [responsive]="true" showEffect="fade" [modal]="true"
+        width="auto" (onAfterHide)="onDialogHide()">
         <div class="ui-grid ui-grid-responsive ui-grid-pad" *ngIf="selectedPerson" style="text-align:center;padding:5px">
             <div class="ui-grid-row">
                 <div class="ui-grid-col-12" style="text-align:center"><img [src]="selectedPerson.sex=='male'?'assets/avatar-male.png':'assets/avatar-female.png'" width="100"></div>
             </div>
 
-            <div class="ui-grid-row">
-                <div class="ui-grid-col-4">Birthday:</div>
-                <div class="ui-grid-col-8">{{selectedPerson.birthDate | date:short}}</div>
+            <div class="detail-row">
+                <div>Birthday:</div>
+                <div>{{selectedPerson.birthDate | date:short}}</div>
             </div>
 
-            <div class="ui-grid-row">
-                <div class="ui-grid-col-4">Weight:</div>
-                <div class="ui-grid-col-8">{{selectedPerson.weight}}</div>
+            <div class="detail-row">
+                <div>Weight:</div>
+                <div>{{selectedPerson.weight}}</div>
             </div>
 
-            <div class="ui-grid-row">
-                <div class="ui-grid-col-4">Height:</div>
-                <div class="ui-grid-col-8">{{selectedPerson.height}}</div>
+            <div class="detail-row">
+                <div>Height:</div>
+                <div>{{selectedPerson.height}}</div>
             </div>
 
-            <div *ngIf="selectedPerson.spouse" class="ui-grid-row">
-                <div class="ui-grid-col-4">Maried to: </div>
-                <div class="ui-grid-col-8">{{selectedPerson.spouse.fullName}}</div>
+            <div *ngIf="selectedPerson.spouse" class="detail-row">
+                <div>{{selectedPerson.sex=='male'?'Wife':'Husband'}} : </div>
+                <!-- <div class="ui-grid-col-8">{{selectedPerson.spouse.fullName}}</div> -->
+                <button pButton class="info-butn" type="button" (click)="showSpouse(selectedPerson.spouse)" [label]="selectedPerson.spouse.firstName"></button>
             </div>
 
-            <div *ngIf="selectedPerson.spouse" class="ui-grid-row">
-                <div class="ui-grid-col-4">Kids : </div>
-                <div class="ui-grid-col-8">{{selectedPerson.childrens.length}}</div>
+            <div *ngIf="selectedPerson.childrens && selectedPerson.childrens.length" class="detail-row">
+                <div>Kids : </div>
+                <div>{{selectedPerson.childrens.length}}</div>
             </div>
             <!-- <div class="ui-grid-row">
             <div class="ui-grid-col-4">Color: </div>
@@ -125,7 +132,8 @@
     </p-dialog>
 
 
-    <p-dialog [header]="selectedPerson.fullName" [(visible)]="displayDialog2" [responsive]="true" showEffect="fade" [modal]="true" width="auto" (onAfterHide)="onDialogHide()">
+    <p-dialog [header]="selectedPerson.fullName" [(visible)]="displayDialog2" [responsive]="true" showEffect="fade" [modal]="true"
+        width="auto" (onAfterHide)="onDialogHide()">
         <div class="ui-grid ui-grid-responsive ui-grid-pad" *ngIf="selectedPerson.genome" style="text-align:center;padding:2px">
 
             <div class="ui-grid-row">
@@ -166,7 +174,28 @@
     </p-dialog>
 
 
-    <p-dialog [header]="selectedPerson.fullName" [(visible)]="displayDialog3" [responsive]="true" showEffect="fade" [modal]="true" width="auto" (onAfterHide)="onDialogHide()">
-        <app-person-view (showInfo)="personInfoSelected($event)" [person]="selectedPerson"></app-person-view>
+    <p-dialog [header]="selectedPerson.fullName +' life events'" [(visible)]="displayDialog4" [responsive]="true" showEffect="fade" [modal]="true" width="auto" (onAfterHide)="onDialogHide()">
+
+        <div style="display:flex;flex-wrap:wrap">
+            <p-dataTable [value]="selectedPerson.myLifeEvents">
+                <p-column field="date" header="Date"></p-column>
+                <p-column field="event" header="Event"></p-column>
+            </p-dataTable>
+        </div>
+    </p-dialog>
+
+</div>
+
+
+<div *ngIf="selectedPersons">
+    <p-dialog [(visible)]="displayDialog3" [responsive]="true" showEffect="fade" [modal]="true" width="auto" (onAfterHide)="onDialogHide()">
+
+        <div style="display:flex;flex-wrap:wrap">
+            <div *ngFor="let person of selectedPersons">
+                <p-panel [header]="person.fullName">
+                    <app-person-view (showInfo)="personInfoSelected($event)" [person]="person"></app-person-view>
+                </p-panel>
+            </div>
+        </div>
     </p-dialog>
 </div>

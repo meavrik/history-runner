@@ -9,12 +9,22 @@ export class Female extends Person {
 
     maidenName: string = "";
     unbornFetus: Person;
+    daysForSex: number;
 
     constructor(father: Male, mother: Female, genome: Genome) {
 
         super(father, mother, genome)
         this.sex = 'female';
 
+    }
+
+    haveSex() {
+        if (!this.spouse) return false;
+
+        let husband: Male = this.spouse as Male;
+        if (this.readyForSex && husband.readyForSex) {
+            this.gotPregnant();
+        }
     }
 
     gotPregnant(): boolean {
@@ -48,5 +58,13 @@ export class Female extends Person {
         } else {
             return 1800;
         }
+    }
+
+    get readyForSex(): boolean {
+        return UtilsService.randomNumber(0, 3) == 0 ? true : false;
+    }
+
+    get fullName(): string {
+        return this.maidenName ? `${this.firstName} (${this.maidenName}) ${this.lastName}` : `${this.firstName}  ${this.lastName}`;
     }
 }
